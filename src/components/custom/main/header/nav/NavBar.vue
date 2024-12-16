@@ -52,7 +52,7 @@ const handleClickItem = (item: Item) => {
 }
 
 const handleRedirectBlog = () => {
-  window.open('https://tam.pub/blog', '_blank')
+  window.open('./blog', '_blank')
 }
 </script>
 
