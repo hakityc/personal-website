@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { message } from 'ant-design-vue'
+import HomeAvatar from "@/views/home/components/HomeAvatar.vue"
 
 enum UrlType {
   BILIBILI = 'https://space.bilibili.com/23076184',
@@ -53,25 +54,25 @@ const handleClick = (url: UrlType) => {
       <template v-for="item in buttons">
         <template v-if="item.key == 2">
           <dev-message>
-            <a-button
+            <n-button
               type="text"
               class="flex items-center justify-center w-64 h-64 p-0"
               @click="handleClick(item.url)">
               <span
                 class="text-48 text-default"
                 :class="item.icon"></span>
-            </a-button>
+            </n-button>
           </dev-message>
         </template>
         <template v-else>
-          <a-button
+          <n-button
             type="text"
             class="flex items-center justify-center w-64 h-64 p-0"
             @click="handleClick(item.url)">
             <span
               class="text-48 text-default"
               :class="item.icon"></span>
-          </a-button>
+          </n-button>
         </template>
       </template>
     </div>

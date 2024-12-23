@@ -1,7 +1,7 @@
 <template>
   <div class="flex shrink-0 items-center justify-center p-32 relative">
     <div
-      class="w-full h-full rounded-full filter-blur-360 absolute avatar-animate"
+      class="w-full h-full rounded-full filter-blur-100 absolute avatar-animate"
       :style="avatarStle"
     ></div>
     <img

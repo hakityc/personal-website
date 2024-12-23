@@ -2,6 +2,7 @@ import { defineConfig, presetAttributify, presetUno, presetIcons } from "unocss"
 import { presetExtra } from "unocss-preset-extra";
 import { presetWebFonts } from "unocss";
 import presetRemToPx from "@unocss/preset-rem-to-px";
+import rules from "@/plugins/unocss/rules.ts";
 
 // import { presetScrollbarHide } from "unocss-preset-scrollbar-hide";
 
@@ -41,11 +42,7 @@ export default defineConfig({
     ["text-ellipsis", "truncate"],
     ["icon-btn", "text-16 inline-block cursor-pointer select-none opacity-75 transition duration-200 ease-in-out hover:opacity-100 hover:text-primary !outline-none"],
   ],
-  rules: [
-    [/^bc-(.+)$/, ([, color]) => ({ "border-color": `#${color}` })],
-    ["card-shadow", { "box-shadow": "0 1px 2px -2px #00000029, 0 3px 6px #0000001f, 0 5px 12px 4px #00000017" }],
-    ["NBR", { background: "#FFFFFF", "box-shadow": " 4px 4px 0px 2px #000000", border: "2px solid #000000" }],
-  ],
+  rules,
   theme: {
     colors: {
       primary: "var(--primary-color)",
