@@ -8,8 +8,7 @@
         enter-to-class="opacity-100"
         leave-active-class="ease-out duration-300 absolute"
         leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-      >
+        leave-to-class="opacity-0">
         <component :is="Component" />
       </transition>
     </router-view>

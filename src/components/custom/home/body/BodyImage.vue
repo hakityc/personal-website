@@ -20,7 +20,7 @@ const buttons = reactive([
     name: '掘金',
     url: UrlType.JUEJIN,
     icon: 'i-tabler:brand-juejin'
-  },
+  }
   // {
   //   key: 2,
   //   name: '邮箱',
@@ -49,7 +49,7 @@ const handleClick = (url: UrlType) => {
     <div class="flex flex-row justify-center items-center">
       <FilterAvatar :size="60"></FilterAvatar>
     </div>
-    <div class="flex flex-row gap-48 justify-evenly items-center">
+    <div class="NBR p-18 flex flex-row gap-48 justify-evenly items-center">
       <template v-for="item in buttons">
         <template v-if="item.key == 2">
           <dev-message>
