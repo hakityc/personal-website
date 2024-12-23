@@ -6,7 +6,7 @@
       </div>
       <div class="flex flex-row gap-48">
         <NavBar></NavBar>
-        <ToolBar></ToolBar>
+        <!-- <ToolBar></ToolBar> -->
       </div>
     </div>
   </div>

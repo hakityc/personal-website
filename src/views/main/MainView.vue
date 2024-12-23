@@ -13,6 +13,7 @@
         <component :is="Component" />
       </transition>
     </router-view>
+    <Footer></Footer>
     <!-- <router-view v-slot="{ Component }">
     </router-view> -->
   </div>
