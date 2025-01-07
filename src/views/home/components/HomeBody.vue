@@ -2,8 +2,8 @@
   <div class="w-full h-full flex relative items-center justify-center gap-80 overflow-hidden">
     <BodyImage class="relative"></BodyImage>
     <BodyContent class="relative"></BodyContent>
-    <BubbleBackground class="absolute">
-    </BubbleBackground>
+    <!-- <BubbleBackground class="absolute">
+    </BubbleBackground> -->
   </div>
 </template> 
 
