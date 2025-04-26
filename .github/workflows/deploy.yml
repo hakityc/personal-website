@@ -1,36 +1,85 @@
-# deploy.yml
-name: Deploy to Aliyun OSS
+name: Build and Deploy on my server
+
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main
+  # 可选：添加 pull_request 支持
+  # pull_request:
+  #   branches:
+  #     - main
+
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
-        uses: actions/checkout@v2
-      - name: build
-        uses: actions/setup-node@v2
-        with:
-          node-version: 18
-      - run: npm install
-      - run: npm run build
-  deploy:
-    needs: build # 设置 deploy job 依赖于 build job
-    runs-on: ubuntu-latest
-    steps:
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          username: "root"
-          server: "${{ secrets.SERVER }}"
-          port: 22
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: "./dist/*"
-          remote_path:
-          # delete_remote_files: true
-          sftpArgs: "-o ConnectTimeout=5"
-          password: ${{ secrets.PASSWORD }}
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Project
+        run: npm run build
+
+      - name: Archive Production Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifact
+          path: ${{ vars.BUILD_DIR }}
+
+      - name: Check Build Dir
+        run: |
+          pwd
+          ls -a ${{ vars.BUILD_DIR }}
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifact
+
+      - name: Deploy to Aliyun server
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          ARGS: "-rlgoDzvc -i"
+          SOURCE: "/"
+          REMOTE_HOST: ${{ secrets.SERVER }}
+          REMOTE_USER: ${{ vars.USER }}
+          TARGET: ${{ vars.DEPLOY_PATH }}
+          #EXCLUDE: "/dist/, /node_modules/"#
+          SCRIPT_BEFORE: |
+            ls -a
+          SCRIPT_AFTER: |
+            ls -a
+            echo $RSYNC_STDOUT
+
+      - name: Deploy to Huaweiyun server
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-rlgoDzvc -i"
+          SOURCE: "/"
+          REMOTE_HOST: ${{ secrets.HUAWEIYUN_SERVER }}
+          REMOTE_USER: ${{ vars.USER }}
+          TARGET: ${{ vars.DEPLOY_PATH }}
+          #EXCLUDE: "/dist/, /node_modules/"#
+          SCRIPT_BEFORE: |
+            ls -a
+          SCRIPT_AFTER: |
+            ls -a
+            echo $RSYNC_STDOUT
