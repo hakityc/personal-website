@@ -2,6 +2,25 @@
   <section class="py-80 px-20 relative overflow-hidden" ref="sectionRef">
     <!-- 背景 -->
     <div class="absolute inset-0 bg-cyber-bg"></div>
+    <div class="absolute inset-0 noise-overlay"></div>
+
+    <!-- 电路板装饰背景 - CP2077风格 -->
+    <div class="absolute inset-0 opacity-5">
+      <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+        <pattern id="circuit-2077" width="120" height="120" patternUnits="userSpaceOnUse">
+          <path
+            d="M10 10 L40 10 L40 40 M60 10 L60 60 L90 60 M110 10 L110 110 M10 60 L30 60 M10 110 L60 110 L60 80"
+            stroke="#fcee0a"
+            fill="none"
+            stroke-width="1"
+          />
+          <rect x="8" y="8" width="4" height="4" fill="#fcee0a" />
+          <rect x="58" y="58" width="4" height="4" fill="#ff003c" />
+          <rect x="108" y="108" width="4" height="4" fill="#fcee0a" />
+        </pattern>
+        <rect width="100%" height="100%" fill="url(#circuit-2077)" />
+      </svg>
+    </div>
 
     <div class="relative z-10 max-w-[900px] mx-auto">
       <!-- 标题 -->
@@ -29,15 +48,23 @@
 
       <!-- 时间线 -->
       <div class="relative">
-        <!-- 中央连接线 - 简化版 -->
-        <div class="absolute left-1/2 top-0 bottom-0 w-[3px] -translate-x-1/2">
+        <!-- 中央连接线 - CP2077电路风格 -->
+        <div class="absolute left-1/2 top-0 bottom-0 w-[4px] -translate-x-1/2">
           <!-- 背景线 -->
           <div class="absolute inset-0 bg-cyber-bg-alt border-x border-cyber-yellow/20"></div>
           <!-- 发光进度线 -->
           <div
-            class="absolute top-0 left-0 right-0 bg-gradient-to-b from-cyber-yellow to-cyber-red transition-[height] duration-300"
+            class="absolute top-0 left-0 right-0 transition-all duration-500 overflow-hidden"
             :style="{ height: `${scrollProgress}%` }"
-          ></div>
+          >
+            <div class="absolute inset-0 bg-gradient-to-b from-cyber-yellow via-cyber-red to-cyber-yellow"></div>
+            <div class="absolute inset-0 animate-cyber-glow"></div>
+            <!-- 流动效果 -->
+            <div 
+              class="absolute inset-0"
+              style="background: repeating-linear-gradient(180deg, transparent 0px, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px); animation: data-stream 2s linear infinite;"
+            ></div>
+          </div>
         </div>
 
         <!-- 经历节点 -->
@@ -109,20 +136,23 @@
               </CyberCard>
             </div>
 
-            <!-- 中间节点 - 简化版 -->
+            <!-- 中间节点 - CP2077芯片风格 -->
             <div class="absolute left-1/2 top-24 -translate-x-1/2 z-20">
               <div class="relative">
-                <!-- 节点 -->
-                <div class="w-20 h-20 bg-cyber-bg border-2 border-cyber-yellow flex items-center justify-center">
-                  <div class="w-8 h-8 bg-cyber-yellow"></div>
+                <!-- 外框 -->
+                <div class="w-32 h-32 bg-cyber-bg border-2 border-cyber-yellow clip-cyber flex items-center justify-center">
+                  <!-- 内核 -->
+                  <div class="w-12 h-12 bg-cyber-yellow clip-cyber-sm animate-cyber-pulse"></div>
                 </div>
+                <!-- 光晕效果 -->
+                <div class="absolute -inset-4 border border-cyber-yellow/30 clip-cyber animate-cyber-pulse"></div>
                 <!-- 连接线 -->
-                <div class="absolute top-1/2 -translate-y-1/2 w-10 h-[2px] bg-cyber-yellow/60" :class="index % 2 === 0 ? '-left-14' : '-right-14'"></div>
+                <div class="absolute top-1/2 -translate-y-1/2 w-12 h-[2px] bg-cyber-yellow" :class="index % 2 === 0 ? '-left-16' : '-right-16'"></div>
               </div>
               <!-- 日期标签 -->
               <div
-                class="absolute top-1/2 -translate-y-1/2 whitespace-nowrap terminal-text text-10 text-cyber-yellow/70 uppercase"
-                :class="index % 2 === 0 ? 'right-40' : 'left-40'"
+                class="absolute top-1/2 -translate-y-1/2 whitespace-nowrap terminal-text text-10 text-cyber-yellow/80 uppercase tracking-wider"
+                :class="index % 2 === 0 ? 'right-50' : 'left-50'"
               >
                 {{ exp.startDate }}
               </div>

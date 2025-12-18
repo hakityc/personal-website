@@ -2,6 +2,27 @@
   <section class="py-80 px-20 relative overflow-hidden">
     <!-- 背景 -->
     <div class="absolute inset-0 bg-gradient-to-b from-cyber-bg via-cyber-bg-alt to-cyber-bg"></div>
+    <div class="absolute inset-0 noise-overlay"></div>
+
+    <!-- 动态粒子背景 - CP2077风格 -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div
+        v-for="i in 15"
+        :key="i"
+        class="absolute w-1 h-1 bg-cyber-yellow/40"
+        :style="{
+          left: `${Math.random() * 100}%`,
+          top: `${Math.random() * 100}%`,
+          animationDelay: `${Math.random() * 3}s`,
+          animationDuration: `${3 + Math.random() * 2}s`
+        }"
+        :class="i % 3 === 0 ? 'animate-float' : 'animate-cyber-pulse'"
+      ></div>
+    </div>
+
+    <!-- 侧边装饰条 -->
+    <div class="absolute left-0 top-1/4 bottom-1/4 w-[3px] bg-gradient-to-b from-transparent via-cyber-yellow/30 to-transparent"></div>
+    <div class="absolute right-0 top-1/4 bottom-1/4 w-[3px] bg-gradient-to-b from-transparent via-cyber-red/30 to-transparent"></div>
 
     <div class="relative z-10 max-w-[1200px] mx-auto">
       <!-- 标题 -->
@@ -41,18 +62,28 @@
             class="relative h-full glass-cyber clip-cyber overflow-hidden transition-all duration-300 group-hover:border-glow-yellow"
             :class="{ 'animate-glitch-skew': activeProject === project.id }"
           >
-            <!-- 顶部装饰 - 简化版 -->
-            <div class="h-36 bg-cyber-bg relative border-b border-cyber-yellow/20 flex items-center justify-between px-16">
+            <!-- 顶部芯片装饰 - CP2077风格 -->
+            <div class="h-40 bg-cyber-bg relative border-b border-cyber-yellow/20 overflow-hidden">
+              <!-- 电路线装饰 -->
+              <svg class="absolute inset-0 w-full h-full opacity-60" xmlns="http://www.w3.org/2000/svg">
+                <line x1="0" y1="20" x2="30%" y2="20" stroke="#fcee0a" stroke-width="1" />
+                <line x1="30%" y1="20" x2="35%" y2="10" stroke="#fcee0a" stroke-width="1" />
+                <line x1="35%" y1="10" x2="65%" y2="10" stroke="#fcee0a" stroke-width="1" />
+                <line x1="65%" y1="10" x2="70%" y2="20" stroke="#ff003c" stroke-width="1" />
+                <line x1="70%" y1="20" x2="100%" y2="20" stroke="#ff003c" stroke-width="1" />
+                <rect x="29%" y="17" width="6" height="6" fill="#fcee0a" />
+                <rect x="65%" y="17" width="6" height="6" fill="#ff003c" />
+              </svg>
               <!-- 项目序号 -->
-              <div class="flex items-center gap-8">
-                <div class="w-6 h-6 bg-cyber-yellow"></div>
+              <div class="absolute left-16 top-1/2 -translate-y-1/2 flex items-center gap-8">
+                <div class="w-8 h-8 bg-cyber-yellow clip-cyber-sm"></div>
                 <span class="terminal-text text-12 text-cyber-yellow uppercase tracking-wider">
                   PROJ_0{{ index + 1 }}
                 </span>
               </div>
               <!-- 状态指示器 -->
-              <div class="flex items-center gap-6">
-                <div class="w-5 h-5 bg-cyber-green"></div>
+              <div class="absolute right-16 top-1/2 -translate-y-1/2 flex items-center gap-6">
+                <div class="w-6 h-6 bg-cyber-green clip-cyber-sm animate-cyber-pulse"></div>
                 <span class="terminal-text text-10 text-cyber-text-dim">LOADED</span>
               </div>
             </div>
@@ -149,6 +180,14 @@
               </div>
             </div>
 
+            <!-- 故障效果层 -->
+            <div
+              v-if="activeProject === project.id"
+              class="absolute inset-0 pointer-events-none overflow-hidden"
+            >
+              <div class="glitch-slice glitch-slice-1"></div>
+              <div class="glitch-slice glitch-slice-2"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -200,9 +239,38 @@ const getHighlightClass = (type: 'primary' | 'secondary' | 'accent') => {
 </script>
 
 <style scoped>
+.glitch-slice {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #fcee0a, #ff003c, transparent);
+  opacity: 0.6;
+}
+
+.glitch-slice-1 {
+  top: 25%;
+  animation: slice-move-1 0.25s ease-in-out;
+}
+
+.glitch-slice-2 {
+  top: 65%;
+  animation: slice-move-2 0.25s ease-in-out;
+}
+
+@keyframes slice-move-1 {
+  0%, 100% { transform: translateX(0); opacity: 0; }
+  50% { transform: translateX(10px); opacity: 0.8; }
+}
+
+@keyframes slice-move-2 {
+  0%, 100% { transform: translateX(0); opacity: 0; }
+  50% { transform: translateX(-10px); opacity: 0.8; }
+}
+
 .expand-enter-active,
 .expand-leave-active {
-  transition: all 0.2s ease-out;
+  transition: all 0.25s ease-out;
   overflow: hidden;
 }
 

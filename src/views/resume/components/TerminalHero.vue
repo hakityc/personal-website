@@ -3,21 +3,53 @@
     <!-- 背景效果 -->
     <div class="absolute inset-0 bg-gradient-to-b from-cyber-bg via-cyber-bg-alt to-cyber-bg"></div>
 
-    <!-- 简化的网格背景 - 使用 CSS 代替 SVG -->
-    <div 
-      class="absolute inset-0 opacity-[0.03]"
-      style="background-image: linear-gradient(rgba(252,238,10,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(252,238,10,0.5) 1px, transparent 1px); background-size: 60px 60px;"
-    ></div>
+    <!-- 噪点效果 -->
+    <div class="absolute inset-0 noise-overlay"></div>
 
-    <!-- 侧边装饰 - 简化 -->
-    <div class="absolute left-20 top-1/2 -translate-y-1/2 hidden lg:block">
-      <div class="w-[80px] h-[2px] bg-gradient-to-l from-cyber-yellow/60 to-transparent"></div>
-      <div class="mt-12 terminal-text text-10 text-cyber-yellow/30 text-right">VER 2.077</div>
+    <!-- 扫描线效果 -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute w-full h-[2px] bg-cyber-yellow/30 animate-scan-line"></div>
     </div>
 
+    <!-- 六边形网格背景 -->
+    <div class="absolute inset-0 opacity-5">
+      <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+        <pattern id="hexagons" width="50" height="43.4" patternUnits="userSpaceOnUse" patternTransform="scale(2)">
+          <polygon 
+            points="25,0 50,12.5 50,37.5 25,50 0,37.5 0,12.5" 
+            fill="none" 
+            stroke="#fcee0a" 
+            stroke-width="0.5"
+          />
+        </pattern>
+        <rect width="100%" height="100%" fill="url(#hexagons)" />
+      </svg>
+    </div>
+
+    <!-- 左侧装饰 -->
+    <div class="absolute left-20 top-1/2 -translate-y-1/2 hidden lg:block">
+      <div class="flex flex-col gap-4 items-end">
+        <div class="w-[100px] h-[2px] bg-gradient-to-l from-cyber-yellow to-transparent"></div>
+        <div class="w-[60px] h-[2px] bg-gradient-to-l from-cyber-red to-transparent"></div>
+        <div class="w-[80px] h-[2px] bg-gradient-to-l from-cyber-yellow/50 to-transparent"></div>
+      </div>
+      <div class="mt-20 terminal-text text-10 text-cyber-yellow/40 text-right">
+        <div>SYS.INIT</div>
+        <div>VER 2.077</div>
+      </div>
+    </div>
+
+    <!-- 右侧装饰 -->
     <div class="absolute right-20 top-1/2 -translate-y-1/2 hidden lg:block">
-      <div class="w-[80px] h-[2px] bg-gradient-to-r from-cyber-yellow/60 to-transparent"></div>
-      <div class="mt-12 terminal-text text-10 text-cyber-yellow/30">NIGHT.CITY</div>
+      <div class="flex flex-col gap-4">
+        <div class="w-[100px] h-[2px] bg-gradient-to-r from-cyber-yellow to-transparent"></div>
+        <div class="w-[60px] h-[2px] bg-gradient-to-r from-cyber-red to-transparent"></div>
+        <div class="w-[80px] h-[2px] bg-gradient-to-r from-cyber-yellow/50 to-transparent"></div>
+      </div>
+      <div class="mt-20 terminal-text text-10 text-cyber-yellow/40">
+        <div>NIGHT.CITY</div>
+        <div>2077.12</div>
+      </div>
     </div>
 
     <!-- 终端窗口 -->
@@ -122,6 +154,17 @@
       </div>
     </div>
 
+    <!-- 角落装饰元素 -->
+    <div class="absolute top-20 left-20 text-cyber-yellow/20 text-10 terminal-text hidden lg:block">
+      <div>// ARASAKA.CORP</div>
+      <div>// SECURE_TERMINAL</div>
+      <div class="mt-8 text-cyber-red/30">⬡ ⬡ ⬡ ⬡ ⬡</div>
+    </div>
+    <div class="absolute bottom-20 right-20 text-cyber-yellow/20 text-10 terminal-text text-right hidden lg:block">
+      <div>BUILD: 2077.12.18</div>
+      <div>PROTOCOL: SECURE</div>
+      <div class="mt-8 text-cyber-red/30">⬡ ⬡ ⬡ ⬡ ⬡</div>
+    </div>
   </section>
 </template>
 

@@ -1,7 +1,10 @@
 <template>
   <div class="resume-view min-h-screen bg-cyber-bg text-cyber-text overflow-x-hidden">
-    <!-- 全局扫描线效果 - 仅一层静态效果 -->
-    <div class="fixed inset-0 pointer-events-none z-50 scan-lines opacity-10"></div>
+    <!-- 全局扫描线效果 -->
+    <div class="fixed inset-0 pointer-events-none z-50 scan-lines opacity-20"></div>
+
+    <!-- 全局噪点 -->
+    <div class="fixed inset-0 pointer-events-none z-40 noise-overlay opacity-30"></div>
 
     <!-- 侧边导航 - CP2077风格 -->
     <nav class="fixed right-24 top-1/2 -translate-y-1/2 z-40 hidden lg:block">

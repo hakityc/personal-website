@@ -2,10 +2,24 @@
   <section class="py-80 px-20 relative overflow-hidden">
     <!-- 背景 -->
     <div class="absolute inset-0 bg-gradient-to-b from-cyber-bg-alt via-cyber-bg to-cyber-bg-alt"></div>
+    <div class="absolute inset-0 noise-overlay"></div>
 
-    <!-- 简化的水平装饰线 -->
-    <div class="absolute top-40 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyber-yellow/15 to-transparent"></div>
-    <div class="absolute bottom-40 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyber-yellow/15 to-transparent"></div>
+    <!-- HUD 装饰元素 - 六边形 -->
+    <div class="absolute top-40 left-40 w-[200px] h-[200px] opacity-10">
+      <svg viewBox="0 0 100 100" class="w-full h-full">
+        <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" fill="none" stroke="#fcee0a" stroke-width="1"/>
+        <polygon points="50,15 85,32.5 85,67.5 50,85 15,67.5 15,32.5" fill="none" stroke="#fcee0a" stroke-width="0.5"/>
+      </svg>
+    </div>
+    <div class="absolute bottom-40 right-40 w-[150px] h-[150px] opacity-10">
+      <svg viewBox="0 0 100 100" class="w-full h-full">
+        <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" fill="none" stroke="#ff003c" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <!-- 水平装饰线 -->
+    <div class="absolute top-40 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyber-yellow/20 to-transparent"></div>
+    <div class="absolute bottom-40 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyber-yellow/20 to-transparent"></div>
 
     <div class="relative z-10 max-w-[1200px] mx-auto">
       <!-- 标题 -->
@@ -56,13 +70,25 @@
                   <span class="terminal-text text-12 text-cyber-yellow font-bold">{{ skill.level }}%</span>
                 </div>
 
-                <!-- 进度条 - CP2077风格（简化版） -->
-                <div class="relative h-6 bg-cyber-bg overflow-hidden border border-cyber-yellow/20">
+                <!-- 进度条 - CP2077风格 -->
+                <div class="relative h-8 bg-cyber-bg clip-cyber-sm overflow-hidden border border-cyber-yellow/20">
                   <!-- 进度填充 -->
                   <div
-                    class="absolute inset-y-0 left-0 bg-gradient-to-r from-cyber-yellow to-cyber-red transition-[width] duration-300"
+                    class="absolute inset-y-0 left-0 transition-all duration-500"
                     :style="{ width: `${skill.level}%` }"
-                  ></div>
+                  >
+                    <!-- 渐变填充 -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-cyber-yellow via-cyber-yellow to-cyber-red"></div>
+                    <!-- 条纹效果 -->
+                    <div 
+                      class="absolute inset-0 opacity-30"
+                      style="background: repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,0.3) 4px, rgba(0,0,0,0.3) 8px);"
+                    ></div>
+                  </div>
+                  <!-- 刻度线 -->
+                  <div class="absolute inset-0 flex justify-between px-1">
+                    <div v-for="i in 10" :key="i" class="w-[1px] h-full bg-cyber-bg/50"></div>
+                  </div>
                 </div>
 
                 <!-- 悬浮提示 - CP2077 HUD风格 -->

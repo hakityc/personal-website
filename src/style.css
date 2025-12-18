@@ -178,21 +178,22 @@ html.dark {
   background: var(--dark-bg);
 }
 
-/* ==================== 赛博朋克2077主题样式 (性能优化版) ==================== */
+/* ==================== 赛博朋克2077主题样式 ==================== */
 
-/* 
- * 性能优化策略:
- * 1. 使用 transform/opacity 代替 box-shadow 动画
- * 2. 减少动画频率，使用更长的 duration
- * 3. 移除噪点动画，改为静态
- * 4. 使用 will-change 提示浏览器优化
- * 5. 减少 backdrop-filter 使用
- */
+/* CP2077 基础动画 */
+@keyframes cyber-glow {
+  0%, 100% { box-shadow: 0 0 5px #fcee0a, 0 0 10px #fcee0a, 0 0 20px rgba(252, 238, 10, 0.5); }
+  50% { box-shadow: 0 0 10px #fcee0a, 0 0 20px #fcee0a, 0 0 40px rgba(252, 238, 10, 0.7); }
+}
 
-/* CP2077 基础动画 - 优化版 */
+@keyframes cyber-glow-red {
+  0%, 100% { box-shadow: 0 0 5px #ff003c, 0 0 10px #ff003c; }
+  50% { box-shadow: 0 0 10px #ff003c, 0 0 20px #ff003c; }
+}
+
 @keyframes cyber-pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  50% { opacity: 0.6; }
 }
 
 @keyframes blink-cursor {
@@ -201,18 +202,58 @@ html.dark {
 }
 
 @keyframes scan-line {
-  0% { transform: translateY(-100%) translateZ(0); }
-  100% { transform: translateY(100vh) translateZ(0); }
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes noise {
+  0%, 100% { background-position: 0 0; }
+  10% { background-position: -5% -10%; }
+  20% { background-position: -15% 5%; }
+  30% { background-position: 7% -25%; }
+  40% { background-position: 20% 25%; }
+  50% { background-position: -25% 10%; }
+  60% { background-position: 15% 5%; }
+  70% { background-position: 0% 15%; }
+  80% { background-position: 25% 35%; }
+  90% { background-position: -10% 10%; }
 }
 
 @keyframes glitch-skew {
-  0%, 100% { transform: skew(0deg) translateZ(0); }
-  50% { transform: skew(-1deg) translateZ(0); }
+  0% { transform: skew(0deg); }
+  20% { transform: skew(-2deg); }
+  40% { transform: skew(3deg); }
+  60% { transform: skew(-1deg); }
+  80% { transform: skew(2deg); }
+  100% { transform: skew(0deg); }
+}
+
+@keyframes glitch-1 {
+  0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+  20% { clip-path: inset(20% 0 60% 0); transform: translate(-3px, 2px); }
+  40% { clip-path: inset(40% 0 40% 0); transform: translate(3px, -2px); }
+  60% { clip-path: inset(60% 0 20% 0); transform: translate(-3px, 2px); }
+  80% { clip-path: inset(80% 0 0% 0); transform: translate(3px, -2px); }
+}
+
+@keyframes glitch-2 {
+  0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+  20% { clip-path: inset(60% 0 20% 0); transform: translate(3px, -2px); }
+  40% { clip-path: inset(20% 0 60% 0); transform: translate(-3px, 2px); }
+  60% { clip-path: inset(80% 0 0% 0); transform: translate(3px, -2px); }
+  80% { clip-path: inset(40% 0 40% 0); transform: translate(-3px, 2px); }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px) translateZ(0); }
-  50% { transform: translateY(-6px) translateZ(0); }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes data-stream {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
 }
 
 @keyframes border-flow {
@@ -221,85 +262,67 @@ html.dark {
 }
 
 @layer utilities {
-  /* CP2077 动画类 - 性能优化版 */
+  /* CP2077 动画类 */
   .animate-cyber-glow {
-    /* 使用静态发光代替动画，悬停时增强 */
-    box-shadow: 0 0 8px rgba(252, 238, 10, 0.4);
-    transition: box-shadow 0.3s ease;
-  }
-  .animate-cyber-glow:hover {
-    box-shadow: 0 0 15px rgba(252, 238, 10, 0.6);
+    animation: cyber-glow 2s ease-in-out infinite;
   }
 
   .animate-cyber-glow-red {
-    box-shadow: 0 0 8px rgba(255, 0, 60, 0.4);
-    transition: box-shadow 0.3s ease;
+    animation: cyber-glow-red 1.5s ease-in-out infinite;
   }
 
   .animate-blink-cursor {
-    animation: blink-cursor 1s step-end infinite;
-    will-change: opacity;
+    animation: blink-cursor 0.8s step-end infinite;
   }
 
   .animate-scan-line {
-    animation: scan-line 6s linear infinite;
-    will-change: transform;
+    animation: scan-line 4s linear infinite;
   }
 
   .animate-float {
-    animation: float 5s ease-in-out infinite;
-    will-change: transform;
+    animation: float 4s ease-in-out infinite;
   }
 
   .animate-cyber-pulse {
-    animation: cyber-pulse 2s ease-in-out infinite;
-    will-change: opacity;
+    animation: cyber-pulse 1.5s ease-in-out infinite;
   }
 
   .animate-glitch-skew {
-    animation: glitch-skew 0.3s ease-in-out;
-    will-change: transform;
+    animation: glitch-skew 0.5s ease-in-out;
   }
 
-  /* CP2077 故障效果 - 仅在悬停时激活 */
+  /* CP2077 故障效果 */
   .glitch-effect {
     position: relative;
   }
 
-  /* 移除持续的伪元素动画，改为悬停触发 */
-  .glitch-effect::before {
-    content: '';
+  .glitch-effect::before,
+  .glitch-effect::after {
+    content: attr(data-text);
     position: absolute;
     top: 0;
-    left: -2px;
+    left: 0;
     width: 100%;
     height: 100%;
-    background: currentColor;
-    opacity: 0;
-    mix-blend-mode: multiply;
-    transition: opacity 0.1s;
+  }
+
+  .glitch-effect::before {
+    color: #ff003c;
+    animation: glitch-1 0.25s infinite linear alternate-reverse;
     z-index: -1;
   }
 
-  .glitch-effect:hover::before {
-    opacity: 0.3;
-    color: #ff003c;
+  .glitch-effect::after {
+    color: #00d4ff;
+    animation: glitch-2 0.25s infinite linear alternate-reverse;
+    z-index: -1;
   }
 
-  /* CP2077 玻璃态效果 - 简化版（移除 backdrop-filter 提升性能） */
+  /* CP2077 玻璃态效果 - 更工业化 */
   .glass-cyber {
-    background: linear-gradient(135deg, rgba(10, 10, 15, 0.97) 0%, rgba(18, 18, 26, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(10, 10, 15, 0.95) 0%, rgba(18, 18, 26, 0.9) 100%);
+    backdrop-filter: blur(10px);
     border: 1px solid rgba(252, 238, 10, 0.2);
-  }
-  
-  /* 仅在支持且性能良好的设备上启用模糊 */
-  @supports (backdrop-filter: blur(8px)) {
-    @media (prefers-reduced-motion: no-preference) {
-      .glass-cyber-blur {
-        background: rgba(10, 10, 15, 0.85);
-        backdrop-filter: blur(8px);
-      }
-    }
   }
 
   /* CP2077 斜切角效果 */
@@ -394,7 +417,7 @@ html.dark {
     letter-spacing: 0.05em;
   }
 
-  /* CP2077 扫描线效果 - 使用 CSS 渐变，静态无动画 */
+  /* CP2077 扫描线效果 */
   .scan-lines::after {
     content: '';
     position: absolute;
@@ -405,24 +428,27 @@ html.dark {
     background: repeating-linear-gradient(
       0deg,
       transparent,
-      transparent 3px,
-      rgba(0, 0, 0, 0.1) 3px,
-      rgba(0, 0, 0, 0.1) 6px
+      transparent 2px,
+      rgba(0, 0, 0, 0.15) 2px,
+      rgba(0, 0, 0, 0.15) 4px
     );
     pointer-events: none;
-    contain: strict;
   }
 
-  /* CP2077 噪点效果 - 静态版本（移除动画） */
+  /* CP2077 噪点效果 */
   .noise-overlay::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    opacity: 0.02;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    width: 200%;
+    height: 200%;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: 0.03;
     pointer-events: none;
-    contain: strict;
-    /* 静态噪点，无动画 */
+    animation: noise 0.5s steps(10) infinite;
   }
 
   /* CP2077 数据流线条 */
@@ -430,20 +456,26 @@ html.dark {
     background: linear-gradient(180deg, #fcee0a 0%, transparent 100%);
   }
 
-  /* CP2077 HUD 边框 - 简化版 */
+  /* CP2077 HUD 边框 */
   .hud-border {
     position: relative;
-    border: 1px solid rgba(252, 238, 10, 0.4);
   }
 
   .hud-border::before {
     content: '';
     position: absolute;
-    top: -1px;
-    left: 20%;
-    right: 20%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #fcee0a, transparent);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid transparent;
+    background: linear-gradient(90deg, #fcee0a, #ff003c, #fcee0a) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    background-size: 200% 100%;
+    animation: border-flow 3s linear infinite;
   }
 
   /* CP2077 标签样式 */
