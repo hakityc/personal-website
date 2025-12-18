@@ -2,18 +2,18 @@ import { RouteRecordRaw } from 'vue-router'
 
 const route: RouteRecordRaw[] = [
   {
-    path: '/',
-    name: 'HomeView',
+    path: '/resume',
+    name: 'ResumeView',
     meta: {
-      title: 'Home',
-      title_cn: '首页',
-      index: 0,
+      title: 'Resume',
+      title_cn: '简历',
+      index: 5,
       show: true
     },
     children: [
       {
         path: '',
-        component: () => import('@/views/home/HomeView.vue')
+        component: () => import('@/views/resume/ResumeView.vue')
       }
     ]
   }

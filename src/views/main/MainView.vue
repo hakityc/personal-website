@@ -20,6 +20,7 @@
 
 <script setup lang="ts">
 import HeaderView from './HeaderView.vue'
+import Footer from '@/components/base/Footer.vue'
 </script>
 
 <style scoped></style>

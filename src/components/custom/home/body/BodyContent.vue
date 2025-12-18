@@ -1,10 +1,10 @@
 <template>
   <div
-    class="w-960 flex flex-col items-end text-default text-right text-180 font-not-italic font-600 lh-normal tracking--0.3375 bg-gradient-linear bg-gradient-[104deg,#3652E1_57.67%,#8057F5_78.54%] bg-clip-text"
+    class="w-960 flex flex-col items-end text-default text-right text-180 not-italic font-600 leading-normal tracking-[-0.3375px] bg-clip-text text-transparent bg-[linear-gradient(104deg,#3652E1_57.67%,#8057F5_78.54%)]"
   >
     <span class="text-zinc-900 text-180 font-semibold ">{{ t('home.content.welcome') }}</span>
     <span
-      class="text-blue-600 text-180 font-semibold bg-gradient-to-r from-#3652E157 via-#7851E997 to-#7851E997 text-transparent bg-clip-text	"
+      class="text-blue-600 text-180 font-semibold bg-gradient-to-r from-[#3652E157] via-[#7851E997] to-[#7851E997] text-transparent bg-clip-text"
     >{{ t('home.content.name') }}</span>
     <span class="text-zinc-900 text-180 font-semibold ">{{ t('home.content.blog') }}</span>
     <!-- <a-button class="w-48.5 h-16 shrink-0 border-rd-20 border-1 border-solid border-[#D9D9D9] bg-[#3652E1]">

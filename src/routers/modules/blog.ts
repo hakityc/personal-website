@@ -12,7 +12,6 @@ const route: RouteRecordRaw[] = [
     },
     children: [
       {
-        name: 'BlogView',
         path: '',
         component: () => import('@/views/blog/index.vue')
       }

@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { message } from 'ant-design-vue'
 import HomeAvatar from "@/views/home/components/HomeAvatar.vue"
+import IconGithub from '~icons/tabler/brand-github'
+import IconJuejin from '~icons/tabler/brand-juejin'
 
 enum UrlType {
   BILIBILI = 'https://space.bilibili.com/23076184',
@@ -14,13 +16,13 @@ const buttons = reactive([
     key: 1,
     name: 'GitHub',
     url: UrlType.GITHUB,
-    icon: 'i-tabler:brand-github'
+    icon: IconGithub
   },
   {
     key: 3,
     name: '掘金',
     url: UrlType.JUEJIN,
-    icon: 'i-tabler:brand-juejin'
+    icon: IconJuejin
   }
   // {
   //   key: 2,
@@ -58,9 +60,7 @@ const handleClick = (url: UrlType) => {
               type="text"
               class="flex items-center justify-center w-64 h-64 p-0"
               @click="handleClick(item.url)">
-              <span
-                class="text-48 text-default"
-                :class="item.icon"></span>
+              <component :is="item.icon" class="text-48 text-default" />
             </n-button>
           </dev-message>
         </template>
@@ -69,9 +69,7 @@ const handleClick = (url: UrlType) => {
             type="text"
             class="flex items-center justify-center w-64 h-64 p-0"
             @click="handleClick(item.url)">
-            <span
-              class="text-48 text-default"
-              :class="item.icon"></span>
+            <component :is="item.icon" class="text-48 text-default" />
           </n-button>
         </template>
       </template>

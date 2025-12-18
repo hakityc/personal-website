@@ -4,21 +4,17 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { AntDesignVueResolver } from "unplugin-vue-components/resolvers";
 import { resolve } from "path";
-import unocss from "unocss/vite";
 import Icons from "unplugin-icons/vite";
 import IconsResolver from "unplugin-icons/resolver";
-import pxtorem from "postcss-pxtorem";
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 import { viteMockServe } from "vite-plugin-mock";
 import vueDevTools from "vite-plugin-vue-devtools";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
-  process.env.BROWSER = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
   const config = {
     plugins: [
       vue(),
-      unocss(),
       AutoImport({
         imports: ["vue", "vue-router"],
         dts: "types/auto-imports.d.ts",
@@ -56,14 +52,6 @@ export default defineConfig(({ command, mode }) => {
           },
           javascriptEnabled: true,
         },
-      },
-      postcss: {
-        plugins: [
-          pxtorem({
-            rootValue: 32,
-            propList: ["*"],
-          }),
-        ],
       },
     },
     build: {

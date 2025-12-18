@@ -2,10 +2,10 @@
   <div class="flex flex-row w-full items-center gap-32">
     <a-button
       type="text"
-      class="p-8!"
+      class="!p-8"
       @click="handleScroll('sub')"
     >
-      <i-grommet-icons:next class="text-32 rotate-180"></i-grommet-icons:next>
+      <i-grommet-icons-next class="text-32 rotate-180"></i-grommet-icons-next>
     </a-button>
     <div
       ref="scrollRef"
@@ -25,7 +25,7 @@
       class="p-1"
       @click="handleScroll('add')"
     >
-      <i-grommet-icons:next class="text-4"></i-grommet-icons:next>
+      <i-grommet-icons-next class="text-4"></i-grommet-icons-next>
     </a-button>
   </div>
 </template>

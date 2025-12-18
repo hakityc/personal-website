@@ -3,7 +3,7 @@
     <n-image
       ref="avatarRef"
       :src="avatar"
-      class="z-10 w-480! h-480!" />
+      class="z-10 !w-480 !h-480" />
   </div>
 </template>
 

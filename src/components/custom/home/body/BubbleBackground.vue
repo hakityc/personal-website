@@ -1,7 +1,7 @@
 <template>
   <div class="flex w-full h-full shrink-0 pointer-events-none">
     <div
-      class="w-313 h-313 shrink-0 left-5/100 top-10/100 border-rd-160 absolute bg-gradient-to-br from-blue-600 via-violet-500 to-violet-500 rounded-full"
+      class="w-313 h-313 shrink-0 left-5/100 top-10/100 rounded-160 absolute bg-gradient-to-br from-blue-600 via-violet-500 to-violet-500 rounded-full"
     ></div>
     <div
       class="w-208 h-208 left-14/100 top-50/100 absolute origin-top-left -rotate-90 bg-gradient-to-br from-blue-600 via-violet-500 to-violet-500 rounded-full"

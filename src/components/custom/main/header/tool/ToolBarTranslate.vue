@@ -1,10 +1,10 @@
 <template>
   <a-button
     type="text"
-    class="p-0! h-32 w-32 hover:bg-primary! flex items-center justify-center"
+    class="!p-0 h-32 w-32 hover:bg-primary flex items-center justify-center"
     @click="i18nStore.handleChangeLanguage()"
   >
-    <i-icon-park-outline:translate class="text-32 text-#fff"></i-icon-park-outline:translate>
+    <i-icon-park-outline-translate class="text-32 text-white"></i-icon-park-outline-translate>
   </a-button>
 </template>
 

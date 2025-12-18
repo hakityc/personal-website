@@ -1,7 +1,7 @@
 <template>
   <div class="w-50">
     <BaseFunctionButton>
-      <i-mingcute:search-line></i-mingcute:search-line>
+      <i-mingcute-search-line></i-mingcute-search-line>
     </BaseFunctionButton>
 
   </div>

@@ -12,7 +12,6 @@ const route: RouteRecordRaw[] = [
     },
     children: [
       {
-        name: 'AboutView',
         path: '',
         component: () => import('@/views/about/AboutView.vue')
       }

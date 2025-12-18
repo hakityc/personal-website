@@ -12,7 +12,6 @@ const route: RouteRecordRaw[] = [
     },
     children: [
       {
-        name: 'ProjectView',
         path: '',
         component: () => import('@/views/project/ProjectView.vue')
       }

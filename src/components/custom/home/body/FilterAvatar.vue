@@ -7,7 +7,7 @@
     <img
       ref="avatarRef"
       :src="avatar"
-      class="z-10 w-480! h-480! rounded-full"
+      class="z-10 !w-480 !h-480 rounded-full"
       :class="`rounded-full`"
     />
   </div>
