@@ -99,27 +99,26 @@
 
         <!-- 终端内容 -->
         <div
-          class="p-24 min-h-[200px] max-h-[400px] terminal-text text-14 leading-relaxed relative overflow-y-auto terminal-scrollbar"
+          class="p-24 min-h-[200px] max-h-[400px] terminal-text text-14 leading-relaxed relative overflow-y-auto terminal-scrollbar flex flex-col-reverse"
         >
           <!-- 左侧行号装饰 -->
           <div class="absolute left-8 top-24 bottom-24 w-[1px] bg-cyber-yellow/10"></div>
 
-          <TransitionGroup name="terminal-line">
-            <div
-              v-for="(line, index) in displayedLines"
-              :key="index"
-              class="mb-10 flex items-start gap-12"
-            >
-              <span class="text-cyber-text-dim text-10 w-20 text-right shrink-0">{{ String(index + 1).padStart(2, '0')
-                }}</span>
-              <span :class="getLineClass(line.type)">{{ line.content }}</span>
-            </div>
-          </TransitionGroup>
+          <!-- 最终的光标 -->
+          <div
+            v-if="!isTyping && typingComplete"
+            class="flex items-start gap-12 mb-10"
+          >
+            <span class="text-cyber-text-dim text-10 w-20 text-right shrink-0">{{ String(displayedLines.length +
+              1).padStart(2, '0') }}</span>
+            <span class="text-cyber-yellow">{{ terminalConfig.userName }}:~$</span>
+            <span class="w-10 h-18 bg-cyber-yellow animate-blink-cursor"></span>
+          </div>
 
           <!-- 当前正在输入的行 -->
           <div
             v-if="isTyping"
-            class="flex items-start gap-12"
+            class="flex items-start gap-12 mb-10"
           >
             <span class="text-cyber-text-dim text-10 w-20 text-right shrink-0">{{ String(displayedLines.length +
               1).padStart(2, '0') }}</span>
@@ -127,16 +126,19 @@
             <span class="w-10 h-18 bg-cyber-yellow animate-blink-cursor ml-1"></span>
           </div>
 
-          <!-- 最终的光标 -->
-          <div
-            v-if="!isTyping && typingComplete"
-            class="flex items-start gap-12 mt-16"
-          >
-            <span class="text-cyber-text-dim text-10 w-20 text-right shrink-0">{{ String(displayedLines.length +
-              1).padStart(2, '0') }}</span>
-            <span class="text-cyber-yellow">{{ terminalConfig.userName }}:~$</span>
-            <span class="w-10 h-18 bg-cyber-yellow animate-blink-cursor"></span>
-          </div>
+          <!-- 显示的行（反转数组，最新的在底部） -->
+          <TransitionGroup name="terminal-line">
+            <div
+              v-for="(line, index) in reversedLines"
+              :key="displayedLines.length - index - 1"
+              class="mb-10 flex items-start gap-12"
+            >
+              <span class="text-cyber-text-dim text-10 w-20 text-right shrink-0">{{ String(displayedLines.length -
+                index).padStart(2, '0')
+              }}</span>
+              <span :class="getLineClass(line.type)">{{ line.content }}</span>
+            </div>
+          </TransitionGroup>
         </div>
 
         <!-- 底部状态栏 -->
@@ -195,6 +197,11 @@ const currentLineType = ref<'command' | 'output' | 'system'>('system')
 const isTyping = ref(false)
 const typingComplete = ref(false)
 const currentTime = ref('')
+
+// 反转数组用于显示，最新的内容在底部
+const reversedLines = computed(() => {
+  return [...displayedLines.value].reverse()
+})
 
 // 使用 useIntervalFn 管理定时器，自动清理
 const { pause: pauseTimeUpdate } = useIntervalFn(() => {

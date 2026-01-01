@@ -18,6 +18,8 @@
   --color-cyber-text-dim: #8a8a8a;
   --color-cyber-pink: #ff2a6d;
   --color-cyber-green: #05ffa1;
+  --color-cyber-orange: #ff9e00;
+  --color-cyber-purple: #b026ff;
   --color-cyber-glass: rgba(10, 10, 15, 0.85);
   --color-cyber-glass-border: rgba(252, 238, 10, 0.3);
 
@@ -128,6 +130,14 @@
   --primary-color: #000;
   --default-color: #1c1c1c;
   --dark-bg: #18181c;
+
+  /* ==================== Cyberpunk 2077 Perk Screen Colors ==================== */
+  /* CP2077 技能树专用颜色变量（基于 Reflexes 红色主题） */
+  --cp-bg-dark: #0f0303;        /* 深血色黑 */
+  --cp-bg-red: #2b0505;         /* 深红色雾 */
+  --cp-neon-red: #ff003c;       /* 主发光红 */
+  --cp-neon-blue: #0ab9eb;      /* 次要强调色 */
+  --cp-yellow: #fcee0a;         /* 掌握状态黄 */
 }
 
 @layer components {
@@ -400,6 +410,77 @@ html.dark {
     );
   }
 
+  /* CP2077 Perk 图标切角样式 - 技能树专用 */
+  .clip-cp-perk {
+    /* CP2077 风格的切角方形（切角更大，更像游戏中的 Perk 图标） */
+    clip-path: polygon(
+      12px 0%,
+      calc(100% - 12px) 0%,
+      100% 12px,
+      100% calc(100% - 12px),
+      calc(100% - 12px) 100%,
+      12px 100%,
+      0% calc(100% - 12px),
+      0% 12px
+    );
+    contain: layout style paint;
+    transform: translateZ(0);
+  }
+
+  /* CP2077 Perk 节点状态样式 */
+  .cp-perk-node-locked {
+    background: rgba(40, 5, 5, 0.8);
+    border: 1px solid rgba(139, 0, 0, 0.5);
+    opacity: 0.6;
+  }
+
+  .cp-perk-node-unlocked {
+    background: transparent;
+    border: 2px solid var(--cp-neon-red);
+    box-shadow: 
+      0 0 8px rgba(255, 0, 60, 0.6),
+      0 0 16px rgba(255, 0, 60, 0.4),
+      inset 0 0 8px rgba(255, 0, 60, 0.1);
+    animation: cp-perk-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes cp-perk-pulse {
+    0%, 100% {
+      box-shadow: 
+        0 0 8px rgba(255, 0, 60, 0.6),
+        0 0 16px rgba(255, 0, 60, 0.4),
+        inset 0 0 8px rgba(255, 0, 60, 0.1);
+    }
+    50% {
+      box-shadow: 
+        0 0 12px rgba(255, 0, 60, 0.8),
+        0 0 24px rgba(255, 0, 60, 0.6),
+        inset 0 0 12px rgba(255, 0, 60, 0.2);
+    }
+  }
+
+  .cp-perk-node-mastered {
+    background: var(--cp-yellow);
+    border: 2px solid var(--cp-yellow);
+    box-shadow: 
+      0 0 12px rgba(252, 238, 10, 0.8),
+      0 0 24px rgba(252, 238, 10, 0.4),
+      inset 0 0 8px rgba(0, 0, 0, 0.1),
+      inset 0 0 0 2px rgba(0, 0, 0, 0.3);
+  }
+
+  /* CP2077 像素化字体 */
+  .cp-pixel-text {
+    font-family: 'Rajdhani', 'Orbitron', 'Share Tech Mono', 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 600;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+
   /* CP2077 边框效果 */
   .border-glow-yellow {
     border: 1px solid #fcee0a;
@@ -499,6 +580,140 @@ html.dark {
     /* 降低动画频率，减少重绘 */
     animation: noise 1s steps(5) infinite;
     will-change: background-position;
+  }
+
+  /* ==================== CP2077 Perk Screen Background ==================== */
+  /* CP2077 技能树背景容器 - 完整的 CRT 界面效果 */
+  .cp-perk-bg {
+    position: relative;
+    background: var(--cp-bg-dark);
+    /* 径向渐变 - Vignette 效果（中心偏红，边缘更深） */
+    background-image: radial-gradient(
+      ellipse at center,
+      var(--cp-bg-red) 0%,
+      var(--cp-bg-dark) 70%,
+      #000000 100%
+    );
+    overflow: hidden;
+  }
+
+  /* CP2077 噪声纹理层 - 更真实的 CRT 噪点 */
+  .cp-noise-texture {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: 1;
+    /* 使用 SVG 滤镜创建更真实的噪声 */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    animation: cp-noise-drift 8s linear infinite;
+  }
+
+  @keyframes cp-noise-drift {
+    0% { background-position: 0 0; }
+    100% { background-position: 200px 200px; }
+  }
+
+  /* CP2077 扫描线效果 - 更明显的 CRT 扫描线 */
+  .cp-scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 2;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.15) 2px,
+      rgba(0, 0, 0, 0.15) 4px
+    );
+    opacity: 0.3;
+  }
+
+  /* CP2077 装饰性六边形背景图案 */
+  .cp-hex-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.03;
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 98px,
+        rgba(255, 0, 60, 0.1) 100px
+      ),
+      repeating-linear-gradient(
+        60deg,
+        transparent,
+        transparent 98px,
+        rgba(255, 0, 60, 0.1) 100px
+      ),
+      repeating-linear-gradient(
+        120deg,
+        transparent,
+        transparent 98px,
+        rgba(255, 0, 60, 0.1) 100px
+      );
+    background-size: 200px 200px, 200px 200px, 200px 200px;
+  }
+
+  /* CP2077 技能树完整背景（组合所有层） */
+  .cp-perk-bg-full {
+    position: relative;
+    background: var(--cp-bg-dark);
+    background-image: radial-gradient(
+      ellipse at center,
+      var(--cp-bg-red) 0%,
+      var(--cp-bg-dark) 70%,
+      #000000 100%
+    );
+    overflow: hidden;
+  }
+
+  .cp-perk-bg-full::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: 1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    animation: cp-noise-drift 8s linear infinite;
+  }
+
+  .cp-perk-bg-full::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 2;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.15) 2px,
+      rgba(0, 0, 0, 0.15) 4px
+    );
+    opacity: 0.3;
   }
 
   /* CP2077 数据流线条 */

@@ -1,6 +1,6 @@
 <template>
   <div class="w-screen h-screen flex flex-col relative">
-    <HeaderView class="z-10"></HeaderView>
+    <HeaderView v-if="!isResumePage" class="z-10"></HeaderView>
     <router-view v-slot="{ Component }">
       <transition
         enter-active-class="ease-in duration-300 absolute"
@@ -12,15 +12,24 @@
         <component :is="Component" />
       </transition>
     </router-view>
-    <Footer></Footer>
+    <Footer v-if="!isResumePage"></Footer>
     <!-- <router-view v-slot="{ Component }">
     </router-view> -->
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import HeaderView from './HeaderView.vue'
 import Footer from '@/components/base/Footer.vue'
+
+const route = useRoute()
+
+// 判断是否是简历页面
+const isResumePage = computed(() => {
+  return route.path === '/resume' || route.path.startsWith('/resume/')
+})
 </script>
 
 <style scoped></style>

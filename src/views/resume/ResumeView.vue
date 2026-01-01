@@ -48,6 +48,30 @@
       <div class="h-full bg-gradient-to-b from-transparent via-cyber-yellow/40 to-transparent"></div>
     </div>
 
+    <!-- 返回首页按钮 - CP2077风格 -->
+    <button
+      @click="goToHome"
+      class="fixed top-24 left-24 z-50 glass-cyber clip-cyber-sm px-20 py-12 border border-cyber-yellow/50 flex items-center gap-10 text-cyber-yellow hover:border-cyber-yellow hover:bg-cyber-yellow/10 transition-all duration-300 group"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="group-hover:translate-x-[-2px] transition-transform duration-300"
+      >
+        <path d="m12 19-7-7 7-7" />
+        <path d="M19 12H5" />
+      </svg>
+      <span class="terminal-text text-12 uppercase tracking-wider">返回首页</span>
+      <div class="w-6 h-6 bg-cyber-yellow/30 clip-cyber-sm group-hover:bg-cyber-yellow group-hover:animate-cyber-pulse transition-colors"></div>
+    </button>
+
     <!-- 主要内容区域 -->
     <main>
       <!-- Hero Section - 终端 -->
@@ -57,7 +81,7 @@
 
       <!-- Skills HUD -->
       <section id="skills">
-        <SkillsHUD />
+        <SkillsHub />
       </section>
 
       <!-- Experience Timeline -->
@@ -157,11 +181,12 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useThrottleFn, useWindowScroll } from '@vueuse/core'
 import { defineAsyncComponent } from 'vue'
+import { useRouter } from 'vue-router'
 import { resumeData, uiConfig } from './data/resumeData'
 
 // 组件懒加载
 const TerminalHero = defineAsyncComponent(() => import('./components/TerminalHero.vue'))
-const SkillsHUD = defineAsyncComponent(() => import('./components/SkillsHUD.vue'))
+const SkillsHub = defineAsyncComponent(() => import('./components/SkillsHub.vue'))
 const ExperienceTimeline = defineAsyncComponent(() => import('./components/ExperienceTimeline.vue'))
 const ProjectArsenal = defineAsyncComponent(() => import('./components/ProjectArsenal.vue'))
 
@@ -170,9 +195,15 @@ const sections = uiConfig.sections
 
 const activeSection = ref('hero')
 const { y } = useWindowScroll()
+const router = useRouter()
 
 // 使用 computed 优化 showBackToTop
 const showBackToTop = computed(() => y.value > 500)
+
+// 返回首页
+const goToHome = () => {
+  router.push('/')
+}
 
 // 缓存元素引用，避免重复查询 DOM
 const sectionElements = new Map<string, HTMLElement>()
