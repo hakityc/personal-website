@@ -1,18 +1,18 @@
 <template>
   <div
-    class="flex flex-col cursor-pointer relative text-32"
-    :class="`${isActive ? 'text-primary' : 'text-default'}`"
+    class="flex flex-col cursor-pointer relative text-24 md:text-32 font-700 uppercase tracking-wider transition-colors duration-200 hover:text-brutal-black"
+    :class="`${isActive ? 'text-brutal-black' : 'text-brutal-gray'}`"
   >
     <slot>{{ title }}</slot>
 
-    <div class="flex flex-row w-full justify-center absolute -bottom-20">
+    <div class="flex flex-row w-full justify-center absolute -bottom-16 md:-bottom-20">
       <transition
         enter-active-class="animate-enter"
         leave-active-class="animate-leave"
       >
         <div
           v-if="isActive"
-          class="flex w-full h-16 rounded-32 bg-primary"
+          class="flex w-full h-6 md:h-8 bg-brutal-black brutal-border-thick"
         ></div>
       </transition>
     </div>

@@ -31,7 +31,7 @@
             <div class="w-8 h-[2px] bg-cyber-yellow"></div>
           </div>
           <span class="terminal-text text-12 text-cyber-red tracking-[0.4em] uppercase">
-            CAREER_LOG.exe
+            职业日志.exe
           </span>
           <div class="flex items-center gap-4">
             <div class="w-8 h-[2px] bg-cyber-yellow"></div>
@@ -42,7 +42,7 @@
           工作经历
         </h2>
         <p class="text-14 text-cyber-text-dim mt-12 terminal-text tracking-wider">
-          // EMPLOYMENT HISTORY NODES
+          // 工作经历节点
         </p>
       </div>
 
@@ -94,7 +94,7 @@
                     >
                       <span class="terminal-text text-10 text-cyber-green flex items-center gap-6 uppercase tracking-wider">
                         <span class="w-6 h-6 bg-cyber-green clip-cyber-sm animate-cyber-pulse"></span>
-                        ACTIVE
+                        进行中
                       </span>
                     </div>
                   </div>
@@ -174,6 +174,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useThrottleFn } from '@vueuse/core'
 import { resumeData } from '../data/resumeData'
 import CyberCard from './CyberCard.vue'
 
@@ -181,23 +182,29 @@ const experiences = resumeData.experiences
 const sectionRef = ref<HTMLElement | null>(null)
 const scrollProgress = ref(0)
 
-const handleScroll = () => {
+// 使用节流优化滚动事件，并使用 requestAnimationFrame 进一步优化
+const handleScroll = useThrottleFn(() => {
   if (!sectionRef.value) return
 
-  const rect = sectionRef.value.getBoundingClientRect()
-  const windowHeight = window.innerHeight
-  const sectionHeight = rect.height
+  // 使用 requestAnimationFrame 确保在下一帧计算，避免阻塞
+  requestAnimationFrame(() => {
+    if (!sectionRef.value) return
 
-  // 计算滚动进度
-  const startOffset = windowHeight * 0.8
-  const scrolled = startOffset - rect.top
-  const total = sectionHeight + startOffset - windowHeight * 0.2
+    const rect = sectionRef.value.getBoundingClientRect()
+    const windowHeight = window.innerHeight
+    const sectionHeight = rect.height
 
-  scrollProgress.value = Math.min(100, Math.max(0, (scrolled / total) * 100))
-}
+    // 计算滚动进度
+    const startOffset = windowHeight * 0.8
+    const scrolled = startOffset - rect.top
+    const total = sectionHeight + startOffset - windowHeight * 0.2
+
+    scrollProgress.value = Math.min(100, Math.max(0, (scrolled / total) * 100))
+  })
+}, 16) // 约 60fps
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
+  window.addEventListener('scroll', handleScroll, { passive: true })
   handleScroll()
 })
 

@@ -1,19 +1,19 @@
 <template>
-  <div class="inline-flex items-start gap-46">
+  <div class="inline-flex items-start gap-24 md:gap-32 lg:gap-46 flex-wrap">
     <template v-for="item in items">
       <NavBarItem
         :is-active="item.path == router.currentRoute.value.path"
         :title="item.title"
         @click="handleClickItem(item)"></NavBarItem>
     </template>
-    <a-button
+    <button
       @click="handleRedirectBlog"
-      class="!w-100 !h-48 flex flex-row items-center justify-center !px-0 !py-4" 
-      type="text">
-      <span class="text-nowrap text-32">博客</span>
-      <i-gg-arrow-top-right></i-gg-arrow-top-right>
-
-    </a-button>
+      class="brutal-button-inverse !w-auto !h-40 md:!h-48 flex flex-row items-center justify-center !px-16 md:!px-24 !py-4 text-24 md:text-32 font-700 uppercase tracking-wider" 
+      type="button"
+      aria-label="博客">
+      <span class="text-nowrap">博客</span>
+      <i-gg-arrow-top-right class="ml-4 md:ml-8"></i-gg-arrow-top-right>
+    </button>
     <!-- <NavBarSearch></NavBarSearch> -->
   </div>
 </template>

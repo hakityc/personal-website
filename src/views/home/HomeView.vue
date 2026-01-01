@@ -1,5 +1,5 @@
 <template>
-    <div class="w-screen h-screen relative flex flex-col flex-1 bg-[#EFEFEF]">
+    <div class="w-screen h-screen relative flex flex-col flex-1 bg-brutal-light-gray overflow-hidden">
         <HomeBody></HomeBody>
     </div>
 </template>

@@ -110,6 +110,18 @@
   --z-index-20: 20;
   --z-index-50: 50;
   --z-index-100: 100;
+
+  /* Brutalist 设计系统颜色 */
+  --color-brutal-black: #000000;
+  --color-brutal-white: #ffffff;
+  --color-brutal-yellow: #ffd700;
+  --color-brutal-red: #ff003c;
+  --color-brutal-blue: #0066ff;
+  --color-brutal-green: #00ff88;
+  --color-brutal-pink: #ff00ff;
+  --color-brutal-orange: #ff6600;
+  --color-brutal-gray: #1a1a1a;
+  --color-brutal-light-gray: #f5f5f5;
 }
 
 :root {
@@ -208,15 +220,9 @@ html.dark {
 
 @keyframes noise {
   0%, 100% { background-position: 0 0; }
-  10% { background-position: -5% -10%; }
-  20% { background-position: -15% 5%; }
-  30% { background-position: 7% -25%; }
-  40% { background-position: 20% 25%; }
-  50% { background-position: -25% 10%; }
-  60% { background-position: 15% 5%; }
-  70% { background-position: 0% 15%; }
-  80% { background-position: 25% 35%; }
-  90% { background-position: -10% 10%; }
+  25% { background-position: -10% -5%; }
+  50% { background-position: 10% 10%; }
+  75% { background-position: -5% 5%; }
 }
 
 @keyframes glitch-skew {
@@ -262,33 +268,45 @@ html.dark {
 }
 
 @layer utilities {
-  /* CP2077 动画类 */
+  /* CP2077 动画类 - 优化性能 */
   .animate-cyber-glow {
     animation: cyber-glow 2s ease-in-out infinite;
+    will-change: box-shadow;
+    transform: translateZ(0); /* 强制GPU加速 */
   }
 
   .animate-cyber-glow-red {
     animation: cyber-glow-red 1.5s ease-in-out infinite;
+    will-change: box-shadow;
+    transform: translateZ(0);
   }
 
   .animate-blink-cursor {
     animation: blink-cursor 0.8s step-end infinite;
+    will-change: opacity;
   }
 
   .animate-scan-line {
     animation: scan-line 4s linear infinite;
+    will-change: transform;
+    transform: translateZ(0);
   }
 
   .animate-float {
     animation: float 4s ease-in-out infinite;
+    will-change: transform;
+    transform: translateZ(0);
   }
 
   .animate-cyber-pulse {
     animation: cyber-pulse 1.5s ease-in-out infinite;
+    will-change: opacity;
   }
 
   .animate-glitch-skew {
     animation: glitch-skew 0.5s ease-in-out;
+    will-change: transform;
+    transform: translateZ(0);
   }
 
   /* CP2077 故障效果 */
@@ -318,14 +336,20 @@ html.dark {
     z-index: -1;
   }
 
-  /* CP2077 玻璃态效果 - 更工业化 */
+  /* CP2077 玻璃态效果 - 优化性能 */
   .glass-cyber {
     background: linear-gradient(135deg, rgba(10, 10, 15, 0.95) 0%, rgba(18, 18, 26, 0.9) 100%);
-    backdrop-filter: blur(10px);
+    /* 使用更轻量的backdrop-filter，或根据设备性能动态调整 */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(252, 238, 10, 0.2);
+    /* 使用contain限制重绘范围 */
+    contain: layout style paint;
+    /* GPU加速 */
+    transform: translateZ(0);
   }
 
-  /* CP2077 斜切角效果 */
+  /* CP2077 斜切角效果 - 性能优化 */
   .clip-cyber {
     clip-path: polygon(
       0 0,
@@ -335,6 +359,10 @@ html.dark {
       16px 100%,
       0 calc(100% - 16px)
     );
+    /* 使用contain限制重绘，但不限制overflow，允许tooltip等弹出内容显示 */
+    contain: layout style;
+    /* GPU加速 */
+    transform: translateZ(0);
   }
 
   .clip-cyber-sm {
@@ -346,6 +374,8 @@ html.dark {
       8px 100%,
       0 calc(100% - 8px)
     );
+    contain: layout style paint;
+    transform: translateZ(0);
   }
 
   .clip-cyber-left {
@@ -356,6 +386,8 @@ html.dark {
       16px 100%,
       0 calc(100% - 16px)
     );
+    contain: layout style paint;
+    transform: translateZ(0);
   }
 
   .clip-cyber-right {
@@ -417,7 +449,12 @@ html.dark {
     letter-spacing: 0.05em;
   }
 
-  /* CP2077 扫描线效果 */
+  /* CP2077 扫描线效果 - 性能优化 */
+  .scan-lines {
+    contain: layout style paint;
+    transform: translateZ(0); /* GPU加速 */
+  }
+  
   .scan-lines::after {
     content: '';
     position: absolute;
@@ -433,9 +470,15 @@ html.dark {
       rgba(0, 0, 0, 0.15) 4px
     );
     pointer-events: none;
+    will-change: auto; /* 静态背景，不需要will-change */
   }
 
-  /* CP2077 噪点效果 */
+  /* CP2077 噪点效果 - 性能优化 */
+  .noise-overlay {
+    contain: layout style paint;
+    transform: translateZ(0); /* GPU加速 */
+  }
+  
   .noise-overlay::before {
     content: '';
     position: absolute;
@@ -445,10 +488,17 @@ html.dark {
     bottom: -50%;
     width: 200%;
     height: 200%;
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    /* 使用更轻量的噪点实现，减少SVG滤镜开销 */
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      radial-gradient(circle at 60% 80%, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px, 80px 80px, 30px 30px;
     opacity: 0.03;
     pointer-events: none;
-    animation: noise 0.5s steps(10) infinite;
+    /* 降低动画频率，减少重绘 */
+    animation: noise 1s steps(5) infinite;
+    will-change: background-position;
   }
 
   /* CP2077 数据流线条 */
@@ -498,5 +548,160 @@ html.dark {
     background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 212, 255, 0.05) 100%);
     border: 1px solid rgba(0, 212, 255, 0.4);
     color: #00d4ff;
+  }
+
+  /* ==================== Brutalist 设计系统 ==================== */
+
+  /* Brutalist 动画 */
+  @keyframes brutal-slide-in {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes brutal-slide-up {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes brutal-scale-in {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes brutal-border-pulse {
+    0%, 100% {
+      box-shadow: 4px 4px 0px 0px var(--color-brutal-black);
+    }
+    50% {
+      box-shadow: 8px 8px 0px 0px var(--color-brutal-black);
+    }
+  }
+
+  @keyframes brutal-text-reveal {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  /* Brutalist 工具类 */
+  .brutal-card {
+    background: var(--color-brutal-white);
+    border: 4px solid var(--color-brutal-black);
+    box-shadow: 8px 8px 0px 0px var(--color-brutal-black);
+    transition: all 0.2s ease;
+  }
+
+  .brutal-card:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 12px 12px 0px 0px var(--color-brutal-black);
+  }
+
+  .brutal-card-colored {
+    background: var(--color-brutal-yellow);
+    border: 4px solid var(--color-brutal-black);
+    box-shadow: 8px 8px 0px 0px var(--color-brutal-black);
+  }
+
+  .brutal-button {
+    background: var(--color-brutal-black);
+    color: var(--color-brutal-white);
+    border: 4px solid var(--color-brutal-black);
+    padding: 16px 32px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .brutal-button:hover {
+    background: var(--color-brutal-white);
+    color: var(--color-brutal-black);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0px 0px var(--color-brutal-black);
+  }
+
+  .brutal-button:active {
+    transform: translate(0, 0);
+    box-shadow: 2px 2px 0px 0px var(--color-brutal-black);
+  }
+
+  .brutal-button-inverse {
+    background: var(--color-brutal-white);
+    color: var(--color-brutal-black);
+    border: 4px solid var(--color-brutal-black);
+  }
+
+  .brutal-button-inverse:hover {
+    background: var(--color-brutal-black);
+    color: var(--color-brutal-white);
+  }
+
+  .brutal-text-bold {
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 0.9;
+  }
+
+  .brutal-border {
+    border: 4px solid var(--color-brutal-black);
+  }
+
+  .brutal-border-thick {
+    border: 8px solid var(--color-brutal-black);
+  }
+
+  .animate-brutal-slide-in {
+    animation: brutal-slide-in 0.6s ease-out;
+  }
+
+  .animate-brutal-slide-up {
+    animation: brutal-slide-up 0.6s ease-out;
+  }
+
+  .animate-brutal-scale-in {
+    animation: brutal-scale-in 0.5s ease-out;
+  }
+
+  .animate-brutal-text-reveal {
+    animation: brutal-text-reveal 1s ease-out;
+  }
+
+  .brutal-text-reveal {
+    animation: brutal-text-reveal 1s ease-out forwards;
+    clip-path: inset(0 100% 0 0);
+  }
+
+  /* 响应式动画禁用 */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-brutal-slide-in,
+    .animate-brutal-slide-up,
+    .animate-brutal-scale-in,
+    .animate-brutal-text-reveal,
+    .brutal-text-reveal {
+      animation: none;
+      clip-path: inset(0 0 0 0);
+    }
   }
 }

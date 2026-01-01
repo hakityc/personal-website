@@ -1,182 +1,48 @@
 import type { ResumeData, TerminalLine } from '@/models/resume'
+// @ts-ignore - Vite支持JSON导入
+import resumeConfig from './resume.json'
 
-export const resumeData: ResumeData = {
-  profile: {
-    name: '汤奕聪',
-    nameEn: 'Tang Yicong',
-    title: '前端开发工程师',
-    experience: '3年+',
-    location: '深圳',
-    contact: {
-      email: 'hakityc@outlook.com',
-      github: 'https://github.com/hakityc'
+// 从JSON配置文件导入数据
+interface ResumeConfig {
+  profile: ResumeData['profile']
+  skills: ResumeData['skills']
+  experiences: ResumeData['experiences']
+  projects: ResumeData['projects']
+  education?: ResumeData['education']
+  terminal: {
+    lines: TerminalLine[]
+    userName: string
+    systemName: string
+  }
+  ui: {
+    sections: Array<{ id: string; label: string }>
+    footer: {
+      connectionTitle: string
+      systemVersion: string
+      copyrightText: string
     }
-  },
-  skills: [
-    {
-      id: 'core',
-      name: '核心技术',
-      nameEn: 'Core Technologies',
-      skills: [
-        { name: 'Vue 3', level: 95, category: 'core', description: 'Composition API, Pinia, Vue Router' },
-        { name: 'TypeScript', level: 90, category: 'core', description: '类型系统, 泛型, 工具类型' },
-        { name: 'Vite', level: 88, category: 'core', description: '构建优化, 插件开发' },
-        { name: 'JavaScript', level: 92, category: 'core', description: 'ES6+, 异步编程, 函数式' }
-      ]
-    },
-    {
-      id: 'ui',
-      name: 'UI 工程',
-      nameEn: 'UI Engineering',
-      skills: [
-        { name: 'Tailwind CSS', level: 90, category: 'ui', description: '原子化CSS, 响应式设计' },
-        { name: 'AntV X6', level: 85, category: 'ui', description: '图编辑, 流程图, 自定义节点' },
-        { name: 'Ant Design Vue', level: 88, category: 'ui', description: '企业级组件库' },
-        { name: 'Element Plus', level: 85, category: 'ui', description: '组件二次封装' }
-      ]
-    },
-    {
-      id: 'engineering',
-      name: '工程化',
-      nameEn: 'Engineering',
-      skills: [
-        { name: 'Node.js', level: 80, category: 'engineering', description: 'Express, Koa, 脚本开发' },
-        { name: 'Webpack', level: 75, category: 'engineering', description: '构建配置, 性能优化' },
-        { name: 'Git', level: 88, category: 'engineering', description: '版本控制, 工作流' },
-        { name: 'CI/CD', level: 70, category: 'engineering', description: 'GitHub Actions, 自动化部署' }
-      ]
-    }
-  ],
-  experiences: [
-    {
-      id: 'suwen',
-      company: '深圳素问智能信息技术有限公司',
-      companyEn: 'Shenzhen Suwen Intelligence',
-      position: '前端开发工程师',
-      positionEn: 'Frontend Engineer',
-      startDate: '2024.06',
-      endDate: '至今',
-      isCurrent: true,
-      location: '深圳',
-      description: [
-        '负责素问TechAgent AI智能体平台的前端开发',
-        '使用 Vue 3 + TypeScript + Vite 技术栈进行开发',
-        '实现 AI 对话流式输出、多模态交互等核心功能',
-        '优化前端性能，提升用户体验'
-      ],
-      technologies: ['Vue 3', 'TypeScript', 'Pinia', 'Vite', 'Tailwind CSS']
-    },
-    {
-      id: 'youtiao',
-      company: '上海有条不紊科技有限公司',
-      companyEn: 'Shanghai Youtiao Technology',
-      position: '前端开发工程师',
-      positionEn: 'Frontend Engineer',
-      startDate: '2022.07',
-      endDate: '2024.03',
-      isCurrent: false,
-      location: '上海',
-      description: [
-        '负责有条画布可视化编辑器的前端开发',
-        '使用 AntV X6 实现复杂流程图编辑功能',
-        '参与抖传单营销平台的开发与维护',
-        '实现虚拟滚动、权限系统等核心功能'
-      ],
-      technologies: ['Vue 3', 'AntV X6', 'TypeScript', 'Ant Design Vue', 'Element Plus']
-    }
-  ],
-  projects: [
-    {
-      id: 'techagent',
-      name: '素问TechAgent',
-      nameEn: 'Suwen TechAgent',
-      company: '深圳素问智能',
-      role: '前端核心开发',
-      period: '2024.06 - 至今',
-      description: 'AI智能体平台，支持多模态交互、流式对话输出、知识库管理等功能。',
-      highlights: [
-        { text: 'Vue 3', type: 'primary' },
-        { text: '流式输出', type: 'accent' },
-        { text: 'Pinia', type: 'secondary' },
-        { text: 'AI对话', type: 'accent' }
-      ],
-      responsibilities: [
-        '设计并实现 AI 对话流式输出功能，支持 Markdown 实时渲染',
-        '封装可复用的对话组件，支持多轮对话、上下文管理',
-        '实现知识库文档上传、解析、检索功能',
-        '优化长列表渲染性能，采用虚拟滚动技术'
-      ],
-      technologies: ['Vue 3', 'TypeScript', 'Pinia', 'SSE', 'Markdown-it']
-    },
-    {
-      id: 'canvas',
-      name: '有条画布',
-      nameEn: 'Youtiao Canvas',
-      company: '上海有条不紊',
-      role: '前端开发',
-      period: '2022.07 - 2024.03',
-      description: '可视化流程编辑器，支持 SOP 流程图设计、节点拖拽、连线、属性配置等功能。',
-      highlights: [
-        { text: 'AntV X6', type: 'primary' },
-        { text: 'SOP流程图', type: 'accent' },
-        { text: '拖拽编辑', type: 'secondary' }
-      ],
-      responsibilities: [
-        '基于 AntV X6 实现流程图编辑器核心功能',
-        '设计自定义节点系统，支持多种业务节点类型',
-        '实现拖拽添加、连线规则、撤销重做等交互',
-        '优化大数据量下的渲染性能'
-      ],
-      technologies: ['Vue 3', 'AntV X6', 'TypeScript', 'Ant Design Vue']
-    },
-    {
-      id: 'douchuandan',
-      name: '抖传单',
-      nameEn: 'Dou Chuandan',
-      company: '上海有条不紊',
-      role: '前端开发',
-      period: '2022.07 - 2024.03',
-      description: '抖音生态营销平台，提供素材管理、数据分析、权限控制等功能。',
-      highlights: [
-        { text: 'RBAC', type: 'primary' },
-        { text: '虚拟滚动', type: 'accent' },
-        { text: '性能优化', type: 'secondary' }
-      ],
-      responsibilities: [
-        '实现基于 RBAC 的权限管理系统',
-        '使用虚拟滚动优化大数据列表性能',
-        '封装通用业务组件，提高开发效率',
-        '参与代码审查，推动团队技术规范'
-      ],
-      technologies: ['Vue 3', 'Element Plus', 'TypeScript', 'Virtual Scroll']
-    }
-  ],
-  education: [
-    {
-      school: '某大学',
-      degree: '本科',
-      major: '计算机相关专业',
-      startDate: '2018',
-      endDate: '2022'
-    }
-  ]
+  }
 }
 
-// 终端打字效果的命令行数据 - CP2077风格
-export const terminalLines: TerminalLine[] = [
-  { type: 'system', content: '[!] BREACH PROTOCOL INITIATED...', delay: 400 },
-  { type: 'system', content: '[!] NEURAL LINK ESTABLISHED', delay: 300 },
-  { type: 'system', content: '[OK] ICE BYPASSED // ACCESS GRANTED', delay: 400 },
-  { type: 'command', content: 'root@netrunner:~$ scan --target=USER_PROFILE', delay: 600 },
-  { type: 'output', content: '    ▸ IDENTITY: 汤奕聪 // TANG_YICONG', delay: 100 },
-  { type: 'output', content: '    ▸ ALIAS: V', delay: 80 },
-  { type: 'command', content: 'root@netrunner:~$ decrypt ./corp_data/role.enc', delay: 500 },
-  { type: 'output', content: '    ▸ ROLE: FRONTEND_ENGINEER', delay: 100 },
-  { type: 'output', content: '    ▸ EXP_LEVEL: 3+ YEARS // VETERAN', delay: 80 },
-  { type: 'command', content: 'root@netrunner:~$ locate --gps', delay: 400 },
-  { type: 'output', content: '    ▸ SECTOR: 深圳 // NIGHT_CITY_EAST', delay: 100 },
-  { type: 'command', content: 'root@netrunner:~$ cat /secure/contact.dat', delay: 400 },
-  { type: 'output', content: '    ▸ ENCRYPTED_LINK: hakityc@outlook.com', delay: 100 },
-  { type: 'system', content: '[OK] DATA EXTRACTION COMPLETE ████████████ 100%', delay: 300 },
-  { type: 'system', content: '[!] TRACE DETECTED // DISCONNECTING...', delay: 200 }
-]
+const config = resumeConfig as unknown as ResumeConfig
+
+// 导出简历数据
+export const resumeData: ResumeData = {
+  profile: config.profile,
+  skills: config.skills,
+  experiences: config.experiences,
+  projects: config.projects,
+  education: config.education
+}
+
+// 导出终端行数据
+export const terminalLines: TerminalLine[] = config.terminal.lines
+
+// 导出终端配置
+export const terminalConfig = {
+  userName: config.terminal.userName,
+  systemName: config.terminal.systemName
+}
+
+// 导出UI配置
+export const uiConfig = config.ui

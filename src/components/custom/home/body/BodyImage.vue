@@ -48,33 +48,56 @@ const handleClick = (url: UrlType) => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center gap-64">
-    <div class="flex flex-row justify-center items-center">
+  <div class="flex flex-col items-center justify-center gap-48 md:gap-64">
+    <div class="flex flex-row justify-center items-center brutal-card p-24 md:p-32">
       <FilterAvatar :size="60"></FilterAvatar>
     </div>
-    <div class="NBR p-18 flex flex-row gap-48 justify-evenly items-center">
-      <template v-for="item in buttons">
+    <div class="brutal-card p-14 md:p-18 flex flex-row gap-32 md:gap-48 justify-evenly items-center">
+      <template v-for="(item, index) in buttons" :key="item.key">
         <template v-if="item.key == 2">
           <dev-message>
-            <n-button
-              type="text"
-              class="flex items-center justify-center w-64 h-64 p-0"
-              @click="handleClick(item.url)">
-              <component :is="item.icon" class="text-48 text-default" />
-            </n-button>
+            <button
+              class="brutal-button-social flex items-center justify-center w-48 h-48 md:w-64 md:h-64 p-0 cursor-pointer transition-all duration-200"
+              :style="{ animationDelay: `${1.2 + index * 0.1}s` }"
+              @click="handleClick(item.url)"
+              :aria-label="item.name">
+              <component :is="item.icon" class="text-36 md:text-48 text-brutal-black" />
+            </button>
           </dev-message>
         </template>
         <template v-else>
-          <n-button
-            type="text"
-            class="flex items-center justify-center w-64 h-64 p-0"
-            @click="handleClick(item.url)">
-            <component :is="item.icon" class="text-48 text-default" />
-          </n-button>
+          <button
+            class="brutal-button-social flex items-center justify-center w-48 h-48 md:w-64 md:h-64 p-0 cursor-pointer transition-all duration-200"
+            :style="{ animationDelay: `${1.2 + index * 0.1}s` }"
+            @click="handleClick(item.url)"
+            :aria-label="item.name">
+            <component :is="item.icon" class="text-36 md:text-48 text-brutal-black" />
+          </button>
         </template>
       </template>
     </div>
   </div>
 </template>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.brutal-button-social {
+  background: transparent;
+  border: none;
+  position: relative;
+  animation: brutal-scale-in 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.brutal-button-social:hover {
+  transform: scale(1.15) translateY(-2px);
+}
+
+.brutal-button-social:active {
+  transform: scale(0.9);
+}
+
+.brutal-button-social:focus-visible {
+  outline: 4px solid var(--color-brutal-black);
+  outline-offset: 4px;
+}
+</style>

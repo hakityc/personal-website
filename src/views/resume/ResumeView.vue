@@ -1,10 +1,10 @@
 <template>
   <div class="resume-view min-h-screen bg-cyber-bg text-cyber-text overflow-x-hidden">
-    <!-- 全局扫描线效果 -->
-    <div class="fixed inset-0 pointer-events-none z-50 scan-lines opacity-20"></div>
+    <!-- 全局扫描线效果 - 使用will-change优化 -->
+    <div class="fixed inset-0 pointer-events-none z-50 scan-lines opacity-20" style="will-change: auto;"></div>
 
-    <!-- 全局噪点 -->
-    <div class="fixed inset-0 pointer-events-none z-40 noise-overlay opacity-30"></div>
+    <!-- 全局噪点 - 降低动画频率 -->
+    <div class="fixed inset-0 pointer-events-none z-40 noise-overlay opacity-30" style="will-change: background-position;"></div>
 
     <!-- 侧边导航 - CP2077风格 -->
     <nav class="fixed right-24 top-1/2 -translate-y-1/2 z-40 hidden lg:block">
@@ -14,18 +14,18 @@
             v-for="(section, index) in sections"
             :key="section.id"
             @click="scrollToSection(section.id)"
-            class="group relative flex items-center gap-12 transition-all duration-300"
+            class="group relative flex items-center gap-12 transition-colors duration-300"
           >
             <!-- 指示器 -->
             <div
-              class="w-12 h-12 clip-cyber-sm transition-all duration-300"
+              class="w-12 h-12 clip-cyber-sm transition-colors duration-300"
               :class="activeSection === section.id 
                 ? 'bg-cyber-yellow animate-cyber-pulse' 
                 : 'bg-cyber-yellow/30 group-hover:bg-cyber-yellow/60'"
             ></div>
             <!-- 标签 -->
             <span
-              class="terminal-text text-10 uppercase tracking-wider transition-all duration-300 whitespace-nowrap"
+              class="terminal-text text-10 uppercase tracking-wider transition-colors duration-300 whitespace-nowrap"
               :class="activeSection === section.id 
                 ? 'text-cyber-yellow text-glow-yellow' 
                 : 'text-cyber-text-dim group-hover:text-cyber-yellow'"
@@ -79,17 +79,17 @@
             <div class="inline-flex items-center gap-12 mb-20">
               <div class="w-40 h-[2px] bg-gradient-to-r from-transparent to-cyber-yellow"></div>
               <span class="terminal-text text-12 text-cyber-yellow tracking-[0.3em] uppercase">
-                ESTABLISH_CONNECTION
+                {{ uiConfig.footer.connectionTitle }}
               </span>
               <div class="w-40 h-[2px] bg-gradient-to-l from-transparent to-cyber-yellow"></div>
             </div>
             <h3 class="terminal-text text-24 text-cyber-yellow text-glow-yellow uppercase tracking-wider mb-24">
-              建立连接
+              {{ uiConfig.footer.connectionTitle }}
             </h3>
             <div class="flex justify-center gap-40 flex-wrap">
               <a
                 :href="`mailto:${resumeData.profile.contact.email}`"
-                class="group glass-cyber clip-cyber-sm px-20 py-12 border border-cyber-yellow/30 hover:border-cyber-yellow transition-all duration-300"
+                class="group glass-cyber clip-cyber-sm px-20 py-12 border border-cyber-yellow/30 hover:border-cyber-yellow transition-colors duration-300"
               >
                 <div class="flex items-center gap-12 terminal-text text-14">
                   <div class="w-8 h-8 bg-cyber-yellow clip-cyber-sm group-hover:animate-cyber-pulse"></div>
@@ -102,12 +102,12 @@
                 v-if="resumeData.profile.contact.github"
                 :href="resumeData.profile.contact.github"
                 target="_blank"
-                class="group glass-cyber clip-cyber-sm px-20 py-12 border border-cyber-red/30 hover:border-cyber-red transition-all duration-300"
+                class="group glass-cyber clip-cyber-sm px-20 py-12 border border-cyber-red/30 hover:border-cyber-red transition-colors duration-300"
               >
                 <div class="flex items-center gap-12 terminal-text text-14">
                   <div class="w-8 h-8 bg-cyber-red clip-cyber-sm group-hover:animate-cyber-pulse"></div>
                   <span class="text-cyber-text group-hover:text-cyber-red transition-colors uppercase tracking-wider">
-                    GITHUB
+                    GitHub
                   </span>
                 </div>
               </a>
@@ -118,13 +118,10 @@
           <div class="text-center terminal-text text-12 text-cyber-text-dim uppercase tracking-wider">
             <div class="flex items-center justify-center gap-16 mb-8">
               <div class="w-20 h-[1px] bg-cyber-yellow/30"></div>
-              <span>SYSTEM v2.077</span>
+              <span>{{ uiConfig.footer.systemVersion }}</span>
               <div class="w-20 h-[1px] bg-cyber-yellow/30"></div>
             </div>
-            <p>© {{ new Date().getFullYear() }} {{ resumeData.profile.name }} // ALL RIGHTS RESERVED</p>
-            <p class="mt-8 text-cyber-yellow/50">
-              DESIGNED WITH CYBERPUNK 2077 AESTHETICS // NIGHT CITY
-            </p>
+            <p>© {{ new Date().getFullYear() }} {{ resumeData.profile.name }} // {{ uiConfig.footer.copyrightText }}</p>
           </div>
         </div>
       </footer>
@@ -135,7 +132,7 @@
       <button
         v-if="showBackToTop"
         @click="scrollToTop"
-        class="fixed bottom-24 right-24 z-40 w-48 h-48 glass-cyber clip-cyber border border-cyber-yellow/50 flex items-center justify-center text-cyber-yellow hover:border-cyber-yellow hover:bg-cyber-yellow/10 transition-all duration-300 group"
+        class="fixed bottom-24 right-24 z-40 w-48 h-48 glass-cyber clip-cyber border border-cyber-yellow/50 flex items-center justify-center text-cyber-yellow hover:border-cyber-yellow hover:bg-cyber-yellow/10 transition-colors duration-300 group"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -157,26 +154,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import TerminalHero from './components/TerminalHero.vue'
-import SkillsHUD from './components/SkillsHUD.vue'
-import ExperienceTimeline from './components/ExperienceTimeline.vue'
-import ProjectArsenal from './components/ProjectArsenal.vue'
-import { resumeData } from './data/resumeData'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useThrottleFn, useWindowScroll } from '@vueuse/core'
+import { defineAsyncComponent } from 'vue'
+import { resumeData, uiConfig } from './data/resumeData'
 
-const sections = [
-  { id: 'hero', label: 'PROFILE' },
-  { id: 'skills', label: 'SKILLS' },
-  { id: 'experience', label: 'CAREER' },
-  { id: 'projects', label: 'PROJECTS' }
-]
+// 组件懒加载
+const TerminalHero = defineAsyncComponent(() => import('./components/TerminalHero.vue'))
+const SkillsHUD = defineAsyncComponent(() => import('./components/SkillsHUD.vue'))
+const ExperienceTimeline = defineAsyncComponent(() => import('./components/ExperienceTimeline.vue'))
+const ProjectArsenal = defineAsyncComponent(() => import('./components/ProjectArsenal.vue'))
+
+// 从配置文件读取sections
+const sections = uiConfig.sections
 
 const activeSection = ref('hero')
-const showBackToTop = ref(false)
+const { y } = useWindowScroll()
+
+// 使用 computed 优化 showBackToTop
+const showBackToTop = computed(() => y.value > 500)
+
+// 缓存元素引用，避免重复查询 DOM
+const sectionElements = new Map<string, HTMLElement>()
 
 const scrollToSection = (id: string) => {
-  const element = document.getElementById(id)
+  const element = sectionElements.get(id) || document.getElementById(id)
   if (element) {
+    sectionElements.set(id, element)
     element.scrollIntoView({ behavior: 'smooth' })
   }
 }
@@ -185,28 +189,113 @@ const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-const handleScroll = () => {
-  showBackToTop.value = window.scrollY > 500
+// 使用 IntersectionObserver 替代 getBoundingClientRect，性能更好
+let rafId: number | null = null
 
-  // 更新当前活动的section
-  for (const section of sections) {
+const setupIntersectionObserver = () => {
+  // 使用 requestAnimationFrame 节流回调，避免频繁更新
+  let pendingUpdate: string | null = null
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      // 找到最接近视口中心的 section
+      let closestEntry: IntersectionObserverEntry | null = null
+      let closestDistance = Infinity
+
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const rect = entry.boundingClientRect
+          const viewportCenter = window.innerHeight / 2
+          const elementCenter = rect.top + rect.height / 2
+          const distance = Math.abs(elementCenter - viewportCenter)
+
+          if (distance < closestDistance) {
+            closestDistance = distance
+            closestEntry = entry
+          }
+        }
+      })
+
+      if (closestEntry) {
+        const sectionId = closestEntry.target.id
+        if (sections.some((s) => s.id === sectionId)) {
+          pendingUpdate = sectionId
+          
+          // 取消之前的raf
+          if (rafId !== null) {
+            cancelAnimationFrame(rafId)
+          }
+          
+          // 使用raf批量更新，避免频繁触发响应式更新
+          rafId = requestAnimationFrame(() => {
+            if (pendingUpdate && activeSection.value !== pendingUpdate) {
+              activeSection.value = pendingUpdate
+            }
+            rafId = null
+            pendingUpdate = null
+          })
+        }
+      }
+    },
+    {
+      root: null,
+      rootMargin: '-40% 0px -40% 0px', // 只检测视口中心 20% 区域
+      threshold: 0
+    }
+  )
+
+  // 观察所有 section
+  sections.forEach((section) => {
     const element = document.getElementById(section.id)
     if (element) {
-      const rect = element.getBoundingClientRect()
-      if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
-        activeSection.value = section.id
-        break
+      sectionElements.set(section.id, element)
+      observer.observe(element)
+    }
+  })
+
+  return observer
+}
+
+// 节流处理滚动事件（作为后备方案）
+const handleScroll = useThrottleFn(() => {
+  // 如果 IntersectionObserver 不可用，使用传统方法
+  if (!window.IntersectionObserver) {
+    for (const section of sections) {
+      const element = sectionElements.get(section.id) || document.getElementById(section.id)
+      if (element) {
+        sectionElements.set(section.id, element)
+        const rect = element.getBoundingClientRect()
+        if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+          activeSection.value = section.id
+          break
+        }
       }
     }
   }
-}
+}, 100)
+
+let observer: IntersectionObserver | null = null
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
+  // 优先使用 IntersectionObserver
+  if (window.IntersectionObserver) {
+    observer = setupIntersectionObserver()
+  } else {
+    // 降级到节流滚动事件
+    window.addEventListener('scroll', handleScroll, { passive: true })
+  }
 })
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
+  if (observer) {
+    observer.disconnect()
+  } else {
+    window.removeEventListener('scroll', handleScroll)
+  }
+  // 清理可能的raf
+  if (rafId !== null) {
+    cancelAnimationFrame(rafId)
+  }
 })
 </script>
 
@@ -232,5 +321,8 @@ onUnmounted(() => {
 
 .animate-border-flow {
   animation: border-flow 3s linear infinite;
+  will-change: transform;
+  transform: translateZ(0); /* GPU加速 */
+  contain: layout style paint;
 }
 </style>

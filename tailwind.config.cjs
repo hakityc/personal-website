@@ -21,6 +21,16 @@ module.exports = {
         primary: 'var(--primary-color)',
         default: 'var(--default-color)',
         dark_bg: 'var(--dark-bg)',
+        'brutal-black': 'var(--color-brutal-black)',
+        'brutal-white': 'var(--color-brutal-white)',
+        'brutal-yellow': 'var(--color-brutal-yellow)',
+        'brutal-red': 'var(--color-brutal-red)',
+        'brutal-blue': 'var(--color-brutal-blue)',
+        'brutal-green': 'var(--color-brutal-green)',
+        'brutal-pink': 'var(--color-brutal-pink)',
+        'brutal-orange': 'var(--color-brutal-orange)',
+        'brutal-gray': 'var(--color-brutal-gray)',
+        'brutal-light-gray': 'var(--color-brutal-light-gray)',
       },
       zIndex: (() => {
         const out = {}

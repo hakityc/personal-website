@@ -1,15 +1,17 @@
 <template>
-  <div class="flex shrink-0 items-center justify-center p-32 relative">
+  <div class="flex shrink-0 items-center justify-center p-24 md:p-32 relative">
     <div
       class="w-full h-full rounded-full filter-blur-100 absolute avatar-animate"
       :style="avatarStle"
     ></div>
-    <img
-      ref="avatarRef"
-      :src="avatar"
-      class="z-10 !w-480 !h-480 rounded-full"
-      :class="`rounded-full`"
-    />
+    <div class="brutal-border-thick z-10 rounded-full p-6 md:p-8 bg-brutal-white">
+      <img
+        ref="avatarRef"
+        :src="avatar"
+        class="!w-320 !h-320 md:!w-480 md:!h-480 rounded-full object-cover"
+        alt="Avatar"
+      />
+    </div>
   </div>
 </template>
 
