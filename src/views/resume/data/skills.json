@@ -461,7 +461,7 @@
             {
               "id": "ai_vec",
               "name": "Vector DB",
-              "icon": "database",
+              "brand": "vectordb",
               "desc": "向量数据库",
               "url": "",
               "level": "locked",
