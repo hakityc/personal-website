@@ -141,7 +141,7 @@ const getCircuitPath = (sourceId: string, targetId: string) => {
 
 const isEdgeActive = (edge: Edge) => {
   const s = props.nodes.find(n => n.id === edge.source)
-  return s && s.mastered
+  return s && s.level === 'mastered'
 }
 </script>
 

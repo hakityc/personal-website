@@ -44,7 +44,7 @@
 import { ref, computed, onMounted, nextTick, watch } from 'vue'
 import { createIcons, icons } from 'lucide'
 import type { Category, Skill, Edge } from './skills/types'
-import { SKILL_DATA } from './skills/skillsData'
+import { SKILL_DATA } from '@/views/resume/data/skillsData'
 import SkillsHubView from './skills/SkillsHubView.vue'
 import SkillsTreeView from './skills/SkillsTreeView.vue'
 import CyberFooter from './skills/CyberFooter.vue'
@@ -85,14 +85,14 @@ const sortedSubcategories = computed(() => {
 const getCategoryStats = (category: Category) => {
   const catSkills = allSkillsFlat.value.filter(s => s.categoryId === category.id)
   const total = catSkills.length
-  const mastered = catSkills.filter(s => s.mastered).length
+  const mastered = catSkills.filter(s => s.level === 'mastered').length
   const percent = total === 0 ? 0 : Math.round((mastered / total) * 100)
   return { percent, mastered, total }
 }
 
 const totalMastery = computed(() => {
   const total = allSkillsFlat.value.length
-  const mastered = allSkillsFlat.value.filter(s => s.mastered).length
+  const mastered = allSkillsFlat.value.filter(s => s.level === 'mastered').length
   return total === 0 ? 0 : Math.round((mastered / total) * 100)
 })
 

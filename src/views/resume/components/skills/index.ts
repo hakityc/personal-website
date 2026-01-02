@@ -8,4 +8,4 @@ export { default as CategoryCard } from './CategoryCard.vue'
 export { default as CyberFooter } from './CyberFooter.vue'
 
 export * from './types'
-export { SKILL_DATA } from './skillsData'
+export { SKILL_DATA } from '@/views/resume/data/skillsData'

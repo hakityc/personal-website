@@ -7,8 +7,7 @@ export interface Skill {
   icon?: string
   desc: string
   url: string
-  mastered: boolean
-  level: 'available' | 'locked'
+  level: 'available' | 'locked' | 'mastered'
   row: number
   deps: string[]
   // Computed properties added during flatten

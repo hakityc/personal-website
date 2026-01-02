@@ -2,8 +2,8 @@
   <div
     class="absolute transform -translate-x-1/2 -translate-y-1/2 z-10"
     :style="{ left: node.x + '%', top: node.y + '%' }"
-    @mouseenter="$emit('mouseenter', node)"
-    @mouseleave="$emit('mouseleave')"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
     @click="$emit('click', node)"
   >
     <div class="relative group cursor-pointer">
@@ -16,23 +16,29 @@
         :arrow="false"
       >
         <template #content>
-          <div class="pointer-events-auto">
+          <div
+            class="pointer-events-auto"
+            @mouseenter="handleMouseEnter"
+            @mouseleave="handleMouseLeave"
+          >
             <div class="bg-black/95 border border-cp-dim cyber-card shadow-[0_0_30px_rgba(0,0,0,0.8)] backdrop-blur-sm">
               <div class="p-8 border border-white/10 cyber-card-inner w-100">
                 <div class="flex items-center gap-8 mb-8 pb-8 border-b border-white/10 overflow-hidden">
                   <div
                     class="w-2 h-6 rounded-2 shrink-0"
                     :class="{
-                      'bg-cp-yellow shadow-[0_0_5px_#fcee0a]': node.mastered,
                       'bg-current animate-pulse': node.level === 'available',
                       'bg-gray-700': node.level === 'locked'
                     }"
-                    :style="{ color: node.level === 'available' ? categoryColor : '' }"
+                    :style="{
+                      backgroundColor: node.level === 'mastered' ? '#fcee0a' : '',
+                      color: node.level === 'available' ? categoryColor : ''
+                    }"
                   ></div>
                   <span
                     class="text-12 font-mono truncate transition-colors"
                     :class="{
-                      'text-cp-yellow font-bold': node.mastered,
+                      'text-cp-yellow font-bold': node.level === 'mastered',
                       'text-white': node.level === 'available',
                       'text-gray-600': node.level === 'locked'
                     }"
@@ -87,7 +93,7 @@
             v-else
             :data-lucide="node.icon"
             class="w-10 h-10 transition-transform duration-200 stroke-[1.5]"
-            :class="node.mastered ? 'text-black' : (node.level === 'locked' ? 'text-cp-dim' : 'text-white')"
+            :class="node.level === 'mastered' ? 'text-black' : (node.level === 'locked' ? 'text-cp-dim' : 'text-white')"
           ></i>
           <div
             v-if="node.level === 'locked'"
@@ -123,25 +129,42 @@ const props = defineProps<{
   isHovered: boolean
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   click: [node: Skill]
   mouseenter: [node: Skill]
   mouseleave: []
 }>()
 
+let hoverTimer: any = null
+
+const handleMouseEnter = () => {
+  if (hoverTimer) {
+    clearTimeout(hoverTimer)
+    hoverTimer = null
+  }
+  emit('mouseenter', props.node)
+}
+
+const handleMouseLeave = () => {
+  if (hoverTimer) clearTimeout(hoverTimer)
+  hoverTimer = setTimeout(() => {
+    emit('mouseleave')
+    hoverTimer = null
+  }, 150)
+}
+
 const brandIconUrl = computed(() => {
   if (!props.node.brand) return ''
-  return `https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/${props.node.brand}.svg`
+  return `/icons/skills/${props.node.brand}.svg`
 })
 
 const iconColor = computed(() => {
-  if (props.node.mastered) return 'black'
-  if (props.node.level === 'available') return props.categoryColor
+  if (props.node.level === 'mastered' || props.node.level === 'available') return props.categoryColor
   return '#374151'
 })
 
 const nodeClasses = computed(() => {
-  if (props.node.mastered) return 'bg-cp-yellow border-cp-yellow shadow-[0_0_15px_rgba(252,238,10,0.6)]'
+  if (props.node.level === 'mastered') return 'bg-cp-bg-dark border-cp-yellow text-cp-yellow shadow-[0_0_15px_rgba(252,238,10,0.6)]'
   if (props.node.level === 'available') return 'bg-cp-bg-dark border-current text-current shadow-[0_0_5px_currentColor] animate-pulse'
   return 'bg-cp-bg-dark border-gray-700 text-gray-700 opacity-60 grayscale'
 })
@@ -152,8 +175,8 @@ const nodeStyles = computed(() => {
 })
 
 const labelStyles = computed(() => ({
-  borderColor: props.node.mastered ? '#fcee0a' : (props.node.level === 'available' ? props.categoryColor : '#444'),
-  color: props.node.mastered ? '#fcee0a' : (props.node.level === 'available' ? '#fff' : '#666')
+  borderColor: props.node.level === 'mastered' ? '#fcee0a' : (props.node.level === 'available' ? props.categoryColor : '#444'),
+  color: props.node.level === 'mastered' ? '#fcee0a' : (props.node.level === 'available' ? '#fff' : '#666')
 }))
 
 const openLink = (url: string) => {

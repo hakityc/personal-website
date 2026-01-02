@@ -66,7 +66,7 @@
                 <div
                   class="w-1.5 h-1.5 rounded-sm shrink-0"
                   :class="{
-                    'bg-cp-yellow shadow-[0_0_5px_#fcee0a]': skill.mastered,
+                    'bg-cp-yellow shadow-[0_0_5px_#fcee0a]': skill.level === 'mastered',
                     'bg-current animate-pulse': skill.level === 'available',
                     'bg-gray-700': skill.level === 'locked'
                   }"
@@ -74,16 +74,16 @@
                 ></div>
                 <span
                   class="text-xs font-mono truncate transition-colors"
-                  :class="{ 'text-cp-yellow font-bold': skill.mastered, 'text-white': skill.level === 'available', 'text-gray-600': skill.level === 'locked' }"
+                  :class="{ 'text-cp-yellow font-bold': skill.level === 'mastered', 'text-white': skill.level === 'available', 'text-gray-600': skill.level === 'locked' }"
                 >
                   {{ skill.name }}
                 </span>
               </div>
               <span
                 class="text-[9px] font-mono tracking-tighter uppercase shrink-0"
-                :class="{ 'text-cp-yellow': skill.mastered, 'text-gray-500': !skill.mastered }"
+                :class="{ 'text-cp-yellow': skill.level === 'mastered', 'text-gray-500': skill.level !== 'mastered' }"
               >
-                {{ skill.mastered ? '[运行]' : (skill.level === 'available' ? '[待机]' : '[加密]') }}
+                {{ skill.level === 'mastered' ? '[运行]' : (skill.level === 'available' ? '[待机]' : '[加密]') }}
               </span>
             </div>
           </div>
