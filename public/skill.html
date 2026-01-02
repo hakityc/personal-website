@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CP2077 赛博工程协议 v2.3</title>
+    
+    <!-- Scripts -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cp-bg-dark': '#050508',
+                        'cp-bg-panel': '#0e0e14',
+                        'cp-red': '#ff003c',
+                        'cp-blue': '#0ab9eb',
+                        'cp-green': '#3bf279',
+                        'cp-purple': '#a824ff',
+                        'cp-orange': '#ff9f0a',
+                        'cp-yellow': '#fcee0a',
+                        'cp-dim': '#2a2a2a',
+                        'cp-text-dim': '#6b7280', 
+                    },
+                    fontFamily: {
+                        'cyber': ['"Orbitron"', '"Noto Sans SC"', 'sans-serif'],
+                        'mono': ['"Share Tech Mono"', '"Noto Sans SC"', 'monospace'],
+                    },
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #1f1f1f 1px, transparent 1px), linear-gradient(to bottom, #1f1f1f 1px, transparent 1px)",
+                        'scanline': "linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%)",
+                    },
+                    boxShadow: {
+                        'neon': '0 0 10px rgba(252, 238, 10, 0.5), 0 0 20px rgba(252, 238, 10, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #050508; color: #fcee0a; overflow: hidden; user-select: none; }
+        .crt-overlay {
+            position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), radial-gradient(circle at center, transparent 60%, black 100%);
+            background-size: 100% 4px, 100% 100%;
+        }
+        .cyber-card { clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); }
+        .cyber-card-inner { clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px); }
+        .glitch-enter-active { animation: glitch 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+        .glitch-leave-active { animation: glitch 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both; }
+        @keyframes glitch { 0% { transform: translate(0); opacity: 0; } 20% { transform: translate(-4px, 4px); opacity: 1; clip-path: inset(20% 0 80% 0); } 40% { transform: translate(4px, -4px); clip-path: inset(80% 0 20% 0); } 60% { transform: translate(-4px, 0); clip-path: inset(40% 0 40% 0); } 80% { transform: translate(4px, 4px); clip-path: inset(0 0 0 0); } 100% { transform: translate(0); opacity: 1; } }
+        ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: #0a0a10; } ::-webkit-scrollbar-thumb { background: #3e3e3e; }
+        .text-neon { text-shadow: 0 0 8px currentColor; }
+        .flow-line { stroke-dasharray: 20; animation: flow 1s linear infinite; }
+        @keyframes flow { to { stroke-dashoffset: -40; } }
+        .icon-mask { -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; }
+        .hover-card-enter-active, .hover-card-leave-active { transition: all 0.2s ease; }
+        .hover-card-enter-from, .hover-card-leave-to { opacity: 0; transform: scale(0.95) translateY(10px); }
+    </style>
+</head>
+<body class="font-mono text-gray-200">
+    <div id="app" class="relative w-full h-screen overflow-hidden flex flex-col">
+        <div class="crt-overlay"></div>
+        
+        <!-- 主界面 -->
+        <main class="relative z-10 flex-1 flex items-center justify-center overflow-hidden">
+            <transition name="glitch" mode="out-in">
+                
+                <!-- HUB VIEW (中枢视图) -->
+                <div v-if="view === 'hub'" key="hub" class="relative w-full h-full flex items-center justify-center">
+                    <div class="absolute inset-0 bg-[linear-gradient(rgba(20,20,20,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(20,20,20,0.5)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none transform scale-150 perspective-1000 rotate-x-12 opacity-30"></div>
+                    <div class="relative w-[800px] h-[600px] max-w-full max-h-full flex items-center justify-center">
+                        <!-- 核心状态 -->
+                        <div class="absolute z-20 w-40 h-40 rounded-full bg-cp-bg-dark border-4 border-cp-dim shadow-[0_0_50px_rgba(0,0,0,1)] flex items-center justify-center group cursor-default">
+                            <div class="absolute inset-0 border-2 border-dashed border-cp-dim rounded-full animate-[spin_10s_linear_infinite] opacity-50"></div>
+                            <div class="absolute inset-2 border border-cp-red rounded-full opacity-20 group-hover:opacity-50 transition-opacity"></div>
+                            <div class="text-center z-10">
+                                <div class="text-[9px] text-cp-dim font-bold tracking-widest mb-1">技能同步率</div>
+                                <div class="text-5xl font-cyber font-black text-cp-blue text-neon tracking-tighter">{{ totalMastery }}%</div>
+                                <div class="text-[9px] text-cp-red font-bold mt-2 animate-pulse">系统待命</div>
+                            </div>
+                        </div>
+
+                        <!-- 连线 -->
+                        <svg class="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible">
+                            <g v-for="(cat, index) in skillData.categories" :key="index">
+                                <line x1="50%" y1="50%" :x2="getPentagonCoord(index, 38).x + '%'" :y2="getPentagonCoord(index, 38).y + '%'" stroke="black" stroke-width="12" />
+                                <line x1="50%" y1="50%" :x2="getPentagonCoord(index, 38).x + '%'" :y2="getPentagonCoord(index, 38).y + '%'" stroke="#2a2a2a" stroke-width="6" />
+                                <line x1="50%" y1="50%" :x2="getPentagonCoord(index, 38).x + '%'" :y2="getPentagonCoord(index, 38).y + '%'" :stroke="cat.color" stroke-width="1" opacity="0.5" />
+                            </g>
+                        </svg>
+
+                        <!-- 分类节点 -->
+                        <div v-for="(cat, index) in skillData.categories" :key="cat.id"
+                            class="absolute z-20 group cursor-pointer"
+                            :style="{ left: getPentagonCoord(index, 38).x + '%', top: getPentagonCoord(index, 38).y + '%', transform: 'translate(-50%, -50%)' }"
+                            @click="selectCategory(cat)"
+                        >
+                            <div class="relative w-32 h-32 md:w-36 md:h-36 bg-cp-bg-panel transition-all duration-300 hover:scale-105 cyber-card">
+                                <div class="absolute inset-0 flex items-center justify-center overflow-hidden cyber-card opacity-20 group-hover:opacity-40 transition-opacity">
+                                    <i :data-lucide="cat.icon" class="w-20 h-20 stroke-1" :style="{ color: cat.color }"></i>
+                                </div>
+                                <div class="absolute inset-0 cyber-card border-2 transition-all duration-300" :style="{ borderColor: cat.color, boxShadow: `0 0 10px ${cat.color}20` }"></div>
+                                <div class="absolute top-1 left-1 right-1 bottom-1 cyber-card-inner border border-white/10 flex flex-col justify-between p-2">
+                                    <div class="flex justify-between items-start">
+                                        <div class="h-1 w-6 bg-current" :style="{ color: cat.color }"></div>
+                                        <div class="text-[8px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1">
+                                            <span>MOD_0{{index+1}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center justify-center relative">
+                                        <div class="flex items-baseline">
+                                            <div class="text-4xl md:text-5xl font-cyber font-black tracking-tighter leading-none z-10 text-white group-hover:text-neon transition-all" :style="{ textShadow: `0 0 20px ${cat.color}` }">
+                                                {{ getCategoryStats(cat).percent }}
+                                            </div>
+                                            <div class="text-sm font-bold ml-1 text-gray-400 group-hover:text-white transition-colors">%</div>
+                                        </div>
+                                        <div class="mt-1 flex items-center gap-1">
+                                            <div class="text-[10px] md:text-xs font-bold tracking-[0.1em] uppercase text-white bg-black/50 px-1 py-0.5 backdrop-blur-sm z-10 border-l-2" :style="{ borderColor: cat.color }">
+                                                {{ cat.name }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-end gap-1 h-1">
+                                        <div class="flex-1 bg-gray-800 h-full overflow-hidden">
+                                            <div class="h-full transition-all duration-500" :style="{ backgroundColor: cat.color, width: getCategoryStats(cat).percent + '%' }"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TREE VIEW (技能树视图) -->
+                <div v-else key="tree" class="w-full h-full flex flex-col md:flex-row p-4 gap-6">
+                    
+                    <!-- 左侧：动态信息 -->
+                    <div class="w-full md:w-80 flex flex-col gap-4 animate-fade-in-left z-20 h-full">
+                        <button @click="view = 'hub'" class="shrink-0 group flex items-center gap-2 text-sm font-bold tracking-wider hover:text-white transition-colors uppercase w-fit px-4 py-2 border border-transparent hover:border-cp-red hover:bg-cp-red/10 cyber-card">
+                            <i data-lucide="chevron-left" class="w-4 h-4 text-cp-red group-hover:text-white"></i> 
+                            <span class="text-cp-red group-hover:text-white">返回中枢</span>
+                        </button>
+                        
+                        <div class="shrink-0 p-6 bg-cp-bg-panel border-l-4 cyber-card relative overflow-hidden transition-all duration-300" :style="{ borderColor: activeCategory.color }">
+                            <div class="absolute -right-4 -top-4 text-9xl font-black opacity-5 pointer-events-none select-none" :style="{ color: activeCategory.color }">
+                                {{ getCategoryStats(activeCategory).percent }}%
+                            </div>
+                            <h2 class="text-2xl font-cyber font-bold uppercase mb-2 text-white italic tracking-tighter">{{ activeCategory.name }}</h2>
+                            <p class="text-xs text-gray-400 leading-relaxed font-mono pt-1">{{ activeCategory.desc }}</p>
+                        </div>
+
+                        <!-- 动态列表 -->
+                        <div class="flex-1 flex flex-col min-h-0 bg-black/40 border border-cp-dim cyber-card overflow-hidden">
+                            <div class="px-4 py-2 bg-cp-dim/30 border-b border-cp-dim flex justify-between items-center">
+                                <span class="text-[10px] font-bold tracking-[0.2em] text-gray-400">// 系统协议清单</span>
+                                <div class="flex gap-1"><div class="w-2 h-2 rounded-full bg-cp-dim"></div><div class="w-2 h-2 rounded-full bg-cp-dim"></div></div>
+                            </div>
+
+                            <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+                                <div v-for="sub in sortedSubcategories" :key="sub.name" class="space-y-2">
+                                    <div class="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-gray-800 pb-1 mb-2">
+                                        <i data-lucide="folder-open" class="w-3 h-3"></i>
+                                        {{ sub.name }}
+                                    </div>
+                                    <div class="grid grid-cols-1 gap-1">
+                                        <div v-for="skill in sub.items" :key="skill.id" 
+                                             class="flex items-center justify-between group/item p-1 hover:bg-white/5 rounded cursor-default transition-colors"
+                                             :class="{'bg-white/10': selectedSkill && selectedSkill.id === skill.id}"
+                                             @mouseenter="handleMouseEnter(skill)"
+                                             @mouseleave="handleMouseLeave"
+                                             @click="selectSkill(skill)">
+                                            <div class="flex items-center gap-2 overflow-hidden">
+                                                <div class="w-1.5 h-1.5 rounded-sm shrink-0"
+                                                     :class="{
+                                                         'bg-cp-yellow shadow-[0_0_5px_#fcee0a]': skill.mastered,
+                                                         'bg-current animate-pulse': skill.level === 'available',
+                                                         'bg-gray-700': skill.level === 'locked'
+                                                     }"
+                                                     :style="{ color: skill.level === 'available' ? activeCategory.color : '' }">
+                                                </div>
+                                                <span class="text-xs font-mono truncate transition-colors"
+                                                      :class="{ 'text-cp-yellow font-bold': skill.mastered, 'text-white': skill.level === 'available', 'text-gray-600': skill.level === 'locked' }">
+                                                    {{ skill.name }}
+                                                </span>
+                                            </div>
+                                            <span class="text-[9px] font-mono tracking-tighter uppercase shrink-0"
+                                                  :class="{ 'text-cp-yellow': skill.mastered, 'text-gray-500': !skill.mastered }">
+                                                {{ skill.mastered ? '[运行]' : (skill.level === 'available' ? '[待机]' : '[加密]') }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 技能图区域 -->
+                    <div class="relative flex-1 bg-cp-bg-panel/50 border border-white/5 cyber-card overflow-hidden select-none">
+                        
+                        <!-- 动态列背景 (自适应任意列数) -->
+                        <div class="absolute inset-x-0 top-0 h-16 flex border-b border-white/10 z-0">
+                            <div v-for="(sub, idx) in sortedSubcategories" :key="sub.name"
+                                 class="h-full flex flex-col justify-center items-center relative transition-all duration-500"
+                                 :class="{'bg-white/[0.02]': sub.layout_col === 0, 'bg-black/20': sub.layout_col !== 0}"
+                                 :style="{ width: (100 / sortedSubcategories.length) + '%' }">
+                                 
+                                 <!-- 分隔线 -->
+                                 <div v-if="idx < sortedSubcategories.length - 1" class="absolute right-0 inset-y-0 border-r border-dashed border-white/5"></div>
+                                 
+                                 <!-- 列标题 -->
+                                 <div class="text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase opacity-70 px-2 text-center"
+                                      :class="{'text-white text-neon opacity-90': sub.layout_col === 0, 'text-gray-500': sub.layout_col !== 0}"
+                                      :style="{ color: sub.layout_col === 0 ? activeCategory.color : '' }">
+                                     {{ sub.name }}
+                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- 垂直分隔线延伸 (动态生成) -->
+                        <div class="absolute inset-0 flex pointer-events-none select-none z-0">
+                            <div v-for="(sub, idx) in sortedSubcategories" :key="'bg-line-'+sub.name"
+                                 class="h-full relative border-white/5"
+                                 :class="{'border-r border-dashed': idx < sortedSubcategories.length - 1}"
+                                 :style="{ width: (100 / sortedSubcategories.length) + '%' }">
+                            </div>
+                        </div>
+
+                        <div class="absolute inset-0 opacity-10 bg-grid-pattern bg-[length:30px_30px]"></div>
+                        
+                        <div class="absolute inset-0 p-8 pt-20">
+                            <svg class="absolute inset-0 w-full h-full pointer-events-none z-0">
+                                <defs>
+                                    <filter id="glow">
+                                        <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                    </filter>
+                                </defs>
+                                <g v-for="edge in activeEdges" :key="edge.id">
+                                    <path :d="getCircuitPath(edge.source, edge.target)" fill="none" stroke="#1a1a1a" stroke-width="10" stroke-linecap="square" />
+                                    <path v-if="isEdgeActive(edge)" :d="getCircuitPath(edge.source, edge.target)" fill="none" :stroke="activeCategory.color" stroke-width="3" class="flow-line" filter="url(#glow)" />
+                                    <path v-else :d="getCircuitPath(edge.source, edge.target)" fill="none" stroke="#333" stroke-width="2" />
+                                </g>
+                            </svg>
+
+                            <div v-for="node in activeNodes" :key="node.id"
+                                class="absolute transform -translate-x-1/2 -translate-y-1/2 z-10"
+                                :style="{ left: node.x + '%', top: node.y + '%' }"
+                                @mouseenter="handleMouseEnter(node)"
+                                @mouseleave="handleMouseLeave"
+                                @click="selectSkill(node)"
+                            >
+                                <div class="relative group cursor-pointer">
+                                    <!-- 悬浮卡 -->
+                                    <transition name="hover-card">
+                                        <div v-if="hoverSkill && hoverSkill.id === node.id" class="absolute bottom-full left-1/2 -translate-x-1/2 pb-6 w-64 z-50 pointer-events-auto">
+                                            <div class="bg-black/95 border border-cp-dim cyber-card shadow-[0_0_30px_rgba(0,0,0,0.8)] backdrop-blur-sm">
+                                                <div class="p-3 border border-white/10 cyber-card-inner">
+                                                    <div class="flex items-center gap-2 mb-2 pb-2 border-b border-white/10">
+                                                        <div class="w-1 h-4 bg-cp-yellow shadow-[0_0_5px_#fcee0a]"></div>
+                                                        <span class="text-sm font-bold text-cp-yellow uppercase tracking-wider">{{ node.name }}</span>
+                                                    </div>
+                                                    <div class="text-[10px] text-gray-300 leading-relaxed mb-3 font-mono">{{ node.desc }}</div>
+                                                    <div v-if="node.url" class="group/link flex items-center gap-2 text-[9px] text-cp-blue uppercase tracking-wider cursor-pointer hover:text-white transition-colors" @click.stop="openLink(node.url)">
+                                                        <div class="p-1 border border-current rounded-sm"><i data-lucide="external-link" class="w-3 h-3"></i></div>
+                                                        <span class="underline decoration-dashed underline-offset-4 group-hover/link:decoration-solid">接入神经网 >></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </transition>
+
+                                    <!-- 节点实体 -->
+                                    <div class="w-20 h-20 flex items-center justify-center transition-all duration-300 cyber-card border-2 hover:scale-110 hover:z-20 hover:shadow-[0_0_20px_rgba(252,238,10,0.3)]"
+                                         :class="getNodeClasses(node)" :style="getNodeStyles(node)">
+                                        <div v-if="node.level !== 'locked'" class="absolute top-0 right-0 w-2.5 h-2.5 border-b-2 border-l-2 border-current opacity-70"></div>
+                                        <div v-if="node.level !== 'locked'" class="absolute bottom-0 left-0 w-2.5 h-2.5 border-t-2 border-r-2 border-current opacity-70"></div>
+                                        
+                                        <div v-if="node.brand" class="w-12 h-12 flex items-center justify-center">
+                                            <div class="w-full h-full icon-mask transition-all duration-300" :style="{ maskImage: `url(${getBrandIconUrl(node)})`, '-webkit-mask-image': `url(${getBrandIconUrl(node)})`, backgroundColor: getIconColor(node) }"></div>
+                                        </div>
+                                        <i v-else :data-lucide="node.icon" class="w-10 h-10 transition-transform duration-200 stroke-[1.5]" :class="node.mastered ? 'text-black' : (node.level === 'locked' ? 'text-cp-dim' : 'text-white')"></i>
+                                        <div v-if="node.level === 'locked'" class="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-[1px]"><i data-lucide="lock" class="w-6 h-6 text-cp-dim/50"></i></div>
+                                    </div>
+                                    
+                                    <div class="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-40 text-center pointer-events-none z-20">
+                                        <div class="text-[10px] md:text-xs uppercase font-black tracking-widest bg-black px-3 py-1 inline-block whitespace-nowrap border-2 shadow-[0_0_10px_black] transition-colors duration-300"
+                                             :style="{ borderColor: node.mastered ? '#fcee0a' : (node.level === 'available' ? activeCategory.color : '#444'), color: node.mastered ? '#fcee0a' : (node.level === 'available' ? '#fff' : '#666') }">
+                                            {{ node.name }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        </main>
+
+        <footer class="h-8 bg-cp-bg-dark border-t border-cp-dim flex items-center justify-between px-6 text-[9px] text-gray-500 font-bold tracking-widest z-50 uppercase">
+            <div class="flex gap-4"><span>内存: 3202MB</span><span>缓冲: 100%</span></div>
+            <div class="flex gap-8"><span class="text-white">数据库 :: <span class="text-cp-green">在线</span></span><span class="animate-pulse text-cp-red">!!! 协议升级完成 !!!</span></div>
+            <div>VER: 3.5 // build_9902</div>
+        </footer>
+    </div>
+
+    <script>
+        const { createApp, ref, computed, onMounted, nextTick } = Vue;
+
+        // 全量数据注入
+        const SKILL_DATA = {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "赛博朋克风格全栈工程师技能图谱数据源 (Strict Layout)",
+  "categories": [
+    {
+      "id": "arch",
+      "name": "架构",
+      "desc": "现代化应用架构与核心语言",
+      "color": "#ff003c",
+      "icon": "cpu",
+      "subcategories": [
+        {
+          "name": "Vue 生态",
+          "layout_col": -1,
+          "items": [
+            { "id": "a_vue", "name": "Vue 3", "brand": "vuedotjs", "desc": "渐进式框架", "url": "https://vuejs.org/", "mastered": false, "level": "locked", "row": 1, "deps": ["a_ts"] },
+            { "id": "a_nuxt", "name": "Nuxt", "brand": "nuxtdotjs", "desc": "Vue 全栈框架", "url": "https://nuxt.com/", "mastered": false, "level": "locked", "row": 2, "deps": ["a_vue"] },
+            { "id": "a_pinia", "name": "Pinia", "brand": "vue.js", "icon": "database", "desc": "Vue 状态管理", "url": "https://pinia.vuejs.org/", "mastered": false, "level": "locked", "row": 3, "deps": ["a_vue"] }
+          ]
+        },
+        {
+          "name": "核心语言 & 趋势",
+          "layout_col": 0,
+          "items": [
+            { "id": "a_ts", "name": "TypeScript", "brand": "typescript", "desc": "现代 Web 开发必修语言", "url": "https://www.typescriptlang.org/", "mastered": false, "level": "available", "row": 0, "deps": [] },
+            { "id": "a_svelte", "name": "Svelte", "brand": "svelte", "desc": "无虚拟 DOM 框架", "url": "https://svelte.dev/", "mastered": false, "level": "locked", "row": 1, "deps": ["a_ts"] },
+            { "id": "a_astro", "name": "Astro", "brand": "astro", "desc": "内容驱动框架", "url": "https://astro.build/", "mastered": false, "level": "locked", "row": 2, "deps": ["a_svelte"] },
+            { "id": "a_rust", "name": "Rust", "brand": "rust", "desc": "高性能工具链基础", "url": "https://www.rust-lang.org/", "mastered": false, "level": "locked", "row": 3, "deps": ["a_ts"] }
+          ]
+        },
+        {
+          "name": "React 生态",
+          "layout_col": 1,
+          "items": [
+            { "id": "a_react", "name": "React", "brand": "react", "desc": "构建 UI 的库", "url": "https://react.dev/", "mastered": false, "level": "locked", "row": 1, "deps": ["a_ts"] },
+            { "id": "a_next", "name": "Next.js", "brand": "nextdotjs", "desc": "React 生产级框架", "url": "https://nextjs.org/", "mastered": false, "level": "locked", "row": 2, "deps": ["a_react"] },
+            { "id": "a_redux", "name": "Redux", "brand": "redux", "desc": "状态容器", "url": "https://redux.js.org/", "mastered": false, "level": "locked", "row": 3, "deps": ["a_react"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "eng",
+      "name": "工程",
+      "desc": "极致工程化与构建工具",
+      "color": "#ff9f0a",
+      "icon": "wrench",
+      "subcategories": [
+        {
+          "name": "包管理 & Monorepo",
+          "layout_col": -1,
+          "items": [
+            { "id": "e_pnpm", "name": "pnpm", "brand": "pnpm", "desc": "高效包管理器", "url": "https://pnpm.io/", "mastered": false, "level": "locked", "row": 1, "deps": ["e_vite"] },
+            { "id": "e_turbo", "name": "Turborepo", "brand": "turborepo", "desc": "高性能构建系统", "url": "https://turbo.build/", "mastered": false, "level": "locked", "row": 2, "deps": ["e_pnpm"] }
+          ]
+        },
+        {
+          "name": "构建工具核心",
+          "layout_col": 0,
+          "items": [
+            { "id": "e_vite", "name": "Vite", "brand": "vite", "desc": "下一代前端工具链", "url": "https://vitejs.dev/", "mastered": false, "level": "available", "row": 0, "deps": [] },
+            { "id": "e_web", "name": "Webpack", "brand": "webpack", "desc": "模块打包器", "url": "https://webpack.js.org/", "mastered": false, "level": "locked", "row": 1, "deps": ["e_vite"] },
+            { "id": "e_rspack", "name": "Rspack", "brand": "rspack", "icon": "zap", "desc": "Rust 高性能打包", "url": "https://www.rspack.dev/", "mastered": false, "level": "locked", "row": 2, "deps": ["e_web"] }
+          ]
+        },
+        {
+          "name": "质量与测试",
+          "layout_col": 1,
+          "items": [
+            { "id": "e_vitest", "name": "Vitest", "brand": "vitest", "desc": "Vite 原生单元测试", "url": "https://vitest.dev/", "mastered": false, "level": "locked", "row": 1, "deps": ["e_vite"] },
+            { "id": "e_play", "name": "Playwright", "brand": "playwright", "desc": "可靠的 E2E 测试", "url": "https://playwright.dev/", "mastered": false, "level": "locked", "row": 2, "deps": ["e_vitest"] },
+            { "id": "e_bio", "name": "Biome", "brand": "biome", "desc": "极速工具链", "url": "https://biomejs.dev/", "mastered": false, "level": "locked", "row": 3, "deps": ["e_vitest"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "server",
+      "name": "服务端",
+      "desc": "服务端运行时与数据存储",
+      "color": "#3bf279",
+      "icon": "server",
+      "subcategories": [
+        {
+          "name": "框架与边缘计算",
+          "layout_col": -1,
+          "items": [
+            { "id": "s_nest", "name": "NestJS", "brand": "nestjs", "desc": "企业级 Node 框架", "url": "https://nestjs.com/", "mastered": false, "level": "locked", "row": 1, "deps": ["s_node"] },
+            { "id": "s_hono", "name": "Hono", "brand": "hono", "icon": "flame", "desc": "边缘计算框架", "url": "https://hono.dev/", "mastered": false, "level": "locked", "row": 2, "deps": ["s_nest"] }
+          ]
+        },
+        {
+          "name": "运行时基础",
+          "layout_col": 0,
+          "items": [
+            { "id": "s_node", "name": "Node.js", "brand": "nodedotjs", "desc": "Chrome V8 运行时", "url": "https://nodejs.org/", "mastered": false, "level": "available", "row": 0, "deps": [] },
+            { "id": "s_bun", "name": "Bun", "brand": "bun", "desc": "极速 JS 运行时", "url": "https://bun.sh/", "mastered": false, "level": "locked", "row": 1, "deps": ["s_node"] },
+            { "id": "s_gql", "name": "GraphQL", "brand": "graphql", "desc": "API 查询语言", "url": "https://graphql.org/", "mastered": false, "level": "locked", "row": 3, "deps": ["s_bun"] }
+          ]
+        },
+        {
+          "name": "数据持久化",
+          "layout_col": 1,
+          "items": [
+            { "id": "s_pg", "name": "Postgres", "brand": "postgresql", "desc": "关系型数据库", "url": "https://www.postgresql.org/", "mastered": false, "level": "locked", "row": 1, "deps": ["s_node"] },
+            { "id": "s_prisma", "name": "Prisma", "brand": "prisma", "desc": "下一代 ORM", "url": "https://www.prisma.io/", "mastered": false, "level": "locked", "row": 2, "deps": ["s_pg"] },
+            { "id": "s_redis", "name": "Redis", "brand": "redis", "desc": "内存数据存储", "url": "https://redis.io/", "mastered": false, "level": "locked", "row": 3, "deps": ["s_pg"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ai",
+      "name": "智能",
+      "desc": "AI 开发与大模型集成",
+      "color": "#a824ff",
+      "icon": "brain-circuit",
+      "subcategories": [
+        {
+          "name": "大模型集成",
+          "layout_col": -1,
+          "items": [
+            { "id": "ai_lang", "name": "LangChain", "brand": "langchain", "desc": "应用编排框架", "url": "https://www.langchain.com/", "mastered": false, "level": "locked", "row": 1, "deps": ["ai_py"] },
+            { "id": "ai_oa", "name": "OpenAI", "brand": "openai", "desc": "GPT API 集成", "url": "https://openai.com/", "mastered": false, "level": "locked", "row": 2, "deps": ["ai_lang"] }
+          ]
+        },
+        {
+          "name": "AI 基础语言",
+          "layout_col": 0,
+          "items": [
+            { "id": "ai_py", "name": "Python", "brand": "python", "desc": "AI 领域通用语言", "url": "https://www.python.org/", "mastered": false, "level": "available", "row": 0, "deps": [] },
+            { "id": "ai_prompt", "name": "Prompt", "icon": "message-square", "desc": "提示词工程", "url": "", "mastered": false, "level": "locked", "row": 1, "deps": ["ai_py"] }
+          ]
+        },
+        {
+          "name": "本地化 & RAG",
+          "layout_col": 1,
+          "items": [
+            { "id": "ai_ollama", "name": "Ollama", "brand": "ollama", "icon": "hard-drive", "desc": "本地运行大模型", "url": "https://ollama.com/", "mastered": false, "level": "locked", "row": 1, "deps": ["ai_py"] },
+            { "id": "ai_vec", "name": "Vector DB", "icon": "database", "desc": "向量数据库", "url": "", "mastered": false, "level": "locked", "row": 2, "deps": ["ai_ollama"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "graphics",
+      "name": "图形",
+      "desc": "图形渲染与 3D 交互",
+      "color": "#0ab9eb",
+      "icon": "eye",
+      "subcategories": [
+        {
+          "name": "3D 引擎",
+          "layout_col": -1,
+          "items": [
+            { "id": "g_three", "name": "Three.js", "brand": "threedotjs", "desc": "JavaScript 3D 库", "url": "https://threejs.org/", "mastered": false, "level": "locked", "row": 1, "deps": ["g_webgl"] },
+            { "id": "g_r3f", "name": "R3F", "icon": "box", "desc": "React Three Fiber", "url": "https://docs.pmnd.rs/react-three-fiber", "mastered": false, "level": "locked", "row": 2, "deps": ["g_three"] }
+          ]
+        },
+        {
+          "name": "底层标准",
+          "layout_col": 0,
+          "items": [
+            { "id": "g_webgl", "name": "WebGL", "brand": "webgl", "desc": "Web 3D 图形标准", "url": "https://www.khronos.org/webgl/", "mastered": false, "level": "available", "row": 0, "deps": [] },
+            { "id": "g_gsap", "name": "GSAP", "brand": "greensock", "desc": "专业动画库", "url": "https://gsap.com/", "mastered": false, "level": "locked", "row": 1, "deps": ["g_webgl"] }
+          ]
+        },
+        {
+          "name": "2D & 可视化",
+          "layout_col": 1,
+          "items": [
+            { "id": "g_pixi", "name": "PixiJS", "icon": "image", "desc": "2D 渲染引擎", "url": "https://pixijs.com/", "mastered": false, "level": "locked", "row": 1, "deps": ["g_webgl"] },
+            { "id": "g_echarts", "name": "ECharts", "brand": "apacheecharts", "desc": "数据可视化", "url": "https://echarts.apache.org/", "mastered": false, "level": "locked", "row": 2, "deps": ["g_pixi"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cross",
+      "name": "跨端",
+      "desc": "混合开发与原生应用",
+      "color": "#00f0ff",
+      "icon": "smartphone",
+      "subcategories": [
+        {
+          "name": "移动端",
+          "layout_col": -1,
+          "items": [
+            { "id": "c_rn", "name": "React Native", "brand": "react", "desc": "使用 React 构建原生应用", "url": "https://reactnative.dev/", "mastered": false, "level": "locked", "row": 1, "deps": ["c_react"] },
+            { "id": "c_expo", "name": "Expo", "brand": "expo", "desc": "RN 应用框架", "url": "https://expo.dev/", "mastered": false, "level": "locked", "row": 2, "deps": ["c_rn"] }
+          ]
+        },
+        {
+          "name": "多端统一",
+          "layout_col": 0,
+          "items": [
+            { "id": "c_react", "name": "React", "brand": "react", "desc": "跨端核心思想", "url": "https://reactnative.dev/", "mastered": false, "level": "available", "row": 0, "deps": [] },
+            { "id": "c_uni", "name": "UniApp", "icon": "smartphone", "desc": "多端统一框架", "url": "https://uniapp.dcloud.net.cn/", "mastered": false, "level": "locked", "row": 1, "deps": ["c_react"] }
+          ]
+        },
+        {
+          "name": "桌面端",
+          "layout_col": 1,
+          "items": [
+            { "id": "c_elec", "name": "Electron", "brand": "electron", "desc": "Web 技术构建桌面应用", "url": "https://www.electronjs.org/", "mastered": false, "level": "locked", "row": 1, "deps": ["c_react"] },
+            { "id": "c_tauri", "name": "Tauri", "brand": "tauri", "desc": "轻量级 Rust 框架", "url": "https://tauri.app/", "mastered": false, "level": "locked", "row": 2, "deps": ["c_elec"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ops",
+      "name": "运维",
+      "desc": "DevOps 与云服务",
+      "color": "#ff0099",
+      "icon": "activity",
+      "subcategories": [
+        {
+          "name": "容器化",
+          "layout_col": -1,
+          "items": [
+            { "id": "o_docker", "name": "Docker", "brand": "docker", "desc": "容器化标准", "url": "https://www.docker.com/", "mastered": false, "level": "locked", "row": 1, "deps": ["o_linux"] },
+            { "id": "o_k8s", "name": "K8s", "brand": "kubernetes", "desc": "容器编排", "url": "https://kubernetes.io/", "mastered": false, "level": "locked", "row": 2, "deps": ["o_docker"] }
+          ]
+        },
+        {
+          "name": "基础设施",
+          "layout_col": 0,
+          "items": [
+            { "id": "o_linux", "name": "Linux", "brand": "linux", "desc": "操作系统基础", "url": "https://www.linux.org/", "mastered": false, "level": "available", "row": 0, "deps": [] },
+            { "id": "o_aws", "name": "AWS", "brand": "amazonaws", "desc": "云服务基础", "url": "https://aws.amazon.com/", "mastered": false, "level": "locked", "row": 1, "deps": ["o_linux"] },
+            { "id": "o_ver", "name": "Vercel", "brand": "vercel", "desc": "前端云平台", "url": "https://vercel.com/", "mastered": false, "level": "locked", "row": 2, "deps": ["o_aws"] }
+          ]
+        },
+        {
+          "name": "CI/CD & 网关",
+          "layout_col": 1,
+          "items": [
+            { "id": "o_ci", "name": "Actions", "brand": "githubactions", "desc": "GitHub CI/CD", "url": "https://github.com/features/actions", "mastered": false, "level": "locked", "row": 1, "deps": ["o_linux"] },
+            { "id": "o_nginx", "name": "Nginx", "brand": "nginx", "desc": "Web 服务器", "url": "https://nginx.org/", "mastered": false, "level": "locked", "row": 2, "deps": ["o_ci"] }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+        createApp({
+            setup() {
+                const view = ref('hub');
+                const timeString = ref('00:00:00');
+                const selectedSkill = ref(null);
+                const hoverSkill = ref(null);
+                let hoverTimer = null;
+
+                const skillData = ref(SKILL_DATA);
+                const activeCategory = ref(skillData.value.categories[0]);
+
+                // 展平数据并继承子分类属性
+                const flattenData = (categories) => {
+                    const allSkills = [];
+                    categories.forEach(cat => {
+                        cat.subcategories.forEach(sub => {
+                            sub.items.forEach(item => {
+                                item.subcategory = sub.name;
+                                item.categoryId = cat.id;
+                                item.layout_col = sub.layout_col; // 关键：继承子分类列
+                                allSkills.push(item);
+                            });
+                        });
+                    });
+                    return allSkills;
+                };
+
+                const allSkillsFlat = computed(() => flattenData(skillData.value.categories));
+
+                // 排序子分类 (确保布局顺序：左 - 中 - 右)
+                const sortedSubcategories = computed(() => {
+                    if (!activeCategory.value || !activeCategory.value.subcategories) return [];
+                    return [...activeCategory.value.subcategories].sort((a, b) => (a.layout_col || 0) - (b.layout_col || 0));
+                });
+
+                const getCategoryStats = (category) => {
+                    const catSkills = allSkillsFlat.value.filter(s => s.categoryId === category.id);
+                    const total = catSkills.length;
+                    const mastered = catSkills.filter(s => s.mastered).length;
+                    const percent = total === 0 ? 0 : Math.round((mastered / total) * 100);
+                    return { percent, mastered, total };
+                };
+
+                const totalMastery = computed(() => {
+                    const total = allSkillsFlat.value.length;
+                    const mastered = allSkillsFlat.value.filter(s => s.mastered).length;
+                    return total === 0 ? 0 : Math.round((mastered / total) * 100);
+                });
+
+                // 处理节点坐标 (动态列计算)
+                const activeNodes = computed(() => {
+                    const skills = allSkillsFlat.value.filter(s => s.categoryId === activeCategory.value.id);
+                    const subCats = sortedSubcategories.value;
+                    const totalCols = subCats.length;
+                    const colWidth = 100 / totalCols;
+
+                    return skills.map(skill => {
+                        const y = 90 - (skill.row * 18);
+                        
+                        // 查找该技能所属子分类的索引
+                        const colIndex = subCats.findIndex(sub => sub.name === skill.subcategory);
+                        // 计算中心点 X 坐标
+                        const x = colIndex !== -1 ? (colIndex * colWidth) + (colWidth / 2) : 50;
+                        
+                        return { ...skill, x, y };
+                    });
+                });
+
+                // 处理连线
+                const activeEdges = computed(() => {
+                    const nodes = activeNodes.value;
+                    const edges = [];
+                    nodes.forEach(node => {
+                        if (node.deps) {
+                            node.deps.forEach(parentId => {
+                                if (nodes.find(n => n.id === parentId)) {
+                                    edges.push({
+                                        id: `e_${parentId}_${node.id}`,
+                                        source: parentId,
+                                        target: node.id
+                                    });
+                                }
+                            });
+                        }
+                    });
+                    return edges;
+                });
+
+                const getPentagonCoord = (index, radius) => {
+                    const count = skillData.value.categories.length;
+                    const angle = (index * (360 / count) - 90) * (Math.PI / 180);
+                    return { x: 50 + radius * Math.cos(angle), y: 50 + radius * Math.sin(angle) };
+                };
+
+                const getCircuitPath = (sourceId, targetId) => {
+                    const nodes = activeNodes.value;
+                    const s = nodes.find(n => n.id === sourceId);
+                    const t = nodes.find(n => n.id === targetId);
+                    if (!s || !t) return '';
+                    const midY = (s.y + t.y) / 2;
+                    return `M ${s.x}% ${s.y}% L ${s.x}% ${midY}% L ${t.x}% ${midY}% L ${t.x}% ${t.y}%`;
+                };
+
+                const isEdgeActive = (edge) => {
+                    const s = activeNodes.value.find(n => n.id === edge.source);
+                    return s && s.mastered;
+                };
+
+                const getNodeClasses = (node) => {
+                    if (node.mastered) return 'bg-cp-yellow border-cp-yellow shadow-[0_0_15px_rgba(252,238,10,0.6)]';
+                    if (node.level === 'available') return 'bg-cp-bg-dark border-current text-current shadow-[0_0_5px_currentColor] animate-pulse';
+                    return 'bg-cp-bg-dark border-gray-700 text-gray-700 opacity-60 grayscale';
+                };
+
+                const getNodeStyles = (node) => {
+                    if (node.level === 'available') return { borderColor: activeCategory.value.color, color: activeCategory.value.color };
+                    return {};
+                };
+
+                const getBrandIconUrl = (node) => {
+                    if (!node.brand) return '';
+                    return `https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/${node.brand}.svg`;
+                };
+
+                const getIconColor = (node) => {
+                    if (node.mastered) return 'black';
+                    if (node.level === 'available') return activeCategory.value.color;
+                    return '#374151';
+                };
+
+                const handleMouseEnter = (node) => {
+                    if (hoverTimer) clearTimeout(hoverTimer);
+                    hoverSkill.value = node;
+                };
+
+                const handleMouseLeave = () => {
+                    hoverTimer = setTimeout(() => { hoverSkill.value = null; }, 300);
+                };
+
+                const selectCategory = (cat) => {
+                    activeCategory.value = cat;
+                    view.value = 'tree';
+                    selectedSkill.value = null;
+                };
+
+                const selectSkill = (node) => { selectedSkill.value = node; };
+                const openLink = (url) => { if(url) window.open(url, '_blank'); };
+
+                setInterval(() => { timeString.value = new Date().toLocaleTimeString('zh-CN', { hour12: false }); }, 1000);
+                onMounted(() => { nextTick(() => { if (window.lucide) window.lucide.createIcons(); }); });
+                Vue.watch(view, () => setTimeout(() => { if (window.lucide) window.lucide.createIcons(); }, 350));
+                Vue.watch(activeCategory, () => setTimeout(() => { if (window.lucide) window.lucide.createIcons(); }, 100));
+
+                return {
+                    view, skillData, activeCategory, activeNodes, activeEdges, selectedSkill, hoverSkill, timeString, totalMastery, sortedSubcategories,
+                    getPentagonCoord, getCircuitPath, selectCategory, selectSkill, handleMouseEnter, handleMouseLeave, openLink,
+                    getNodeClasses, getNodeStyles, isEdgeActive, getBrandIconUrl, getIconColor, getCategoryStats
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

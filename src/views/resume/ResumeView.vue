@@ -1,13 +1,19 @@
 <template>
   <div class="resume-view min-h-screen bg-cyber-bg text-cyber-text overflow-x-hidden">
     <!-- 全局扫描线效果 - 使用will-change优化 -->
-    <div class="fixed inset-0 pointer-events-none z-50 scan-lines opacity-20" style="will-change: auto;"></div>
+    <div
+      class="fixed inset-0 pointer-events-none z-50 scan-lines opacity-20"
+      style="will-change: auto;"
+    ></div>
 
     <!-- 全局噪点 - 降低动画频率 -->
-    <div class="fixed inset-0 pointer-events-none z-40 noise-overlay opacity-30" style="will-change: background-position;"></div>
+    <div
+      class="fixed inset-0 pointer-events-none z-40 noise-overlay opacity-30"
+      style="will-change: background-position;"
+    ></div>
 
     <!-- 侧边导航 - CP2077风格 -->
-    <nav class="fixed right-24 top-1/2 -translate-y-1/2 z-40 hidden lg:block">
+    <nav class="fixed right-12 top-1/2 -translate-y-1/2 z-40 hidden lg:block">
       <div class="glass-cyber clip-cyber-left p-12 border border-cyber-yellow/30">
         <div class="flex flex-col gap-20">
           <button
@@ -19,15 +25,15 @@
             <!-- 指示器 -->
             <div
               class="w-12 h-12 clip-cyber-sm transition-colors duration-300"
-              :class="activeSection === section.id 
-                ? 'bg-cyber-yellow animate-cyber-pulse' 
+              :class="activeSection === section.id
+                ? 'bg-cyber-yellow animate-cyber-pulse'
                 : 'bg-cyber-yellow/30 group-hover:bg-cyber-yellow/60'"
             ></div>
             <!-- 标签 -->
             <span
               class="terminal-text text-10 uppercase tracking-wider transition-colors duration-300 whitespace-nowrap"
-              :class="activeSection === section.id 
-                ? 'text-cyber-yellow text-glow-yellow' 
+              :class="activeSection === section.id
+                ? 'text-cyber-yellow text-glow-yellow'
                 : 'text-cyber-text-dim group-hover:text-cyber-yellow'"
             >
               {{ section.label }}
@@ -40,7 +46,10 @@
     <!-- 顶部装饰条 - CP2077风格 -->
     <div class="fixed top-0 left-0 right-0 h-[3px] z-40 overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-r from-cyber-yellow via-cyber-red to-cyber-yellow"></div>
-      <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-border-flow" style="background-size: 200% 100%;"></div>
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-border-flow"
+        style="background-size: 200% 100%;"
+      ></div>
     </div>
 
     <!-- 左侧装饰线 -->
@@ -69,7 +78,9 @@
         <path d="M19 12H5" />
       </svg>
       <span class="terminal-text text-12 uppercase tracking-wider">返回首页</span>
-      <div class="w-6 h-6 bg-cyber-yellow/30 clip-cyber-sm group-hover:bg-cyber-yellow group-hover:animate-cyber-pulse transition-colors"></div>
+      <div
+        class="w-6 h-6 bg-cyber-yellow/30 clip-cyber-sm group-hover:bg-cyber-yellow group-hover:animate-cyber-pulse transition-colors"
+      ></div>
     </button>
 
     <!-- 主要内容区域 -->
@@ -117,7 +128,8 @@
               >
                 <div class="flex items-center gap-12 terminal-text text-14">
                   <div class="w-8 h-8 bg-cyber-yellow clip-cyber-sm group-hover:animate-cyber-pulse"></div>
-                  <span class="text-cyber-text group-hover:text-cyber-yellow transition-colors uppercase tracking-wider">
+                  <span
+                    class="text-cyber-text group-hover:text-cyber-yellow transition-colors uppercase tracking-wider">
                     {{ resumeData.profile.contact.email }}
                   </span>
                 </div>
@@ -251,12 +263,12 @@ const setupIntersectionObserver = () => {
         const sectionId = closestEntry.target.id
         if (sections.some((s) => s.id === sectionId)) {
           pendingUpdate = sectionId
-          
+
           // 取消之前的raf
           if (rafId !== null) {
             cancelAnimationFrame(rafId)
           }
-          
+
           // 使用raf批量更新，避免频繁触发响应式更新
           rafId = requestAnimationFrame(() => {
             if (pendingUpdate && activeSection.value !== pendingUpdate) {
@@ -346,14 +358,20 @@ onUnmounted(() => {
 }
 
 @keyframes border-flow {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .animate-border-flow {
   animation: border-flow 3s linear infinite;
   will-change: transform;
-  transform: translateZ(0); /* GPU加速 */
+  transform: translateZ(0);
+  /* GPU加速 */
   contain: layout style paint;
 }
 </style>

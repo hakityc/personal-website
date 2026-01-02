@@ -31,6 +31,45 @@ module.exports = {
         'brutal-orange': 'var(--color-brutal-orange)',
         'brutal-gray': 'var(--color-brutal-gray)',
         'brutal-light-gray': 'var(--color-brutal-light-gray)',
+        // New Skills Module Colors
+        'cp-bg-dark': '#050508',
+        'cp-bg-panel': '#0e0e14',
+        'cp-red': '#ff003c',
+        'cp-blue': '#0ab9eb',
+        'cp-green': '#3bf279',
+        'cp-purple': '#a824ff',
+        'cp-orange': '#ff9f0a',
+        'cp-yellow': '#fcee0a',
+        'cp-dim': '#2a2a2a',
+        'cp-text-dim': '#6b7280', 
+      },
+      fontFamily: {
+        'cyber': ['"Orbitron"', '"Noto Sans SC"', 'sans-serif'],
+        'mono': ['"Share Tech Mono"', '"Noto Sans SC"', 'monospace'],
+      },
+      backgroundImage: {
+        'grid-pattern': "linear-gradient(to right, #1f1f1f 1px, transparent 1px), linear-gradient(to bottom, #1f1f1f 1px, transparent 1px)",
+        'scanline': "linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%)",
+      },
+      boxShadow: {
+        'neon': '0 0 10px rgba(252, 238, 10, 0.5), 0 0 20px rgba(252, 238, 10, 0.3)',
+      },
+      animation: {
+        'glitch': 'glitch 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both',
+        'flow': 'flow 1s linear infinite',
+      },
+      keyframes: {
+        glitch: {
+          '0%': { transform: 'translate(0)', opacity: '0' },
+          '20%': { transform: 'translate(-4px, 4px)', opacity: '1', clipPath: 'inset(20% 0 80% 0)' },
+          '40%': { transform: 'translate(4px, -4px)', clipPath: 'inset(80% 0 20% 0)' },
+          '60%': { transform: 'translate(-4px, 0)', clipPath: 'inset(40% 0 40% 0)' },
+          '80%': { transform: 'translate(4px, 4px)', clipPath: 'inset(0 0 0 0)' },
+          '100%': { transform: 'translate(0)', opacity: '1' },
+        },
+        flow: {
+          'to': { strokeDashoffset: '-40' }
+        }
       },
       zIndex: (() => {
         const out = {}

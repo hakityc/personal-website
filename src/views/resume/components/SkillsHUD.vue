@@ -1,5 +1,5 @@
 <template>
-  <section class="py-80 px-20 relative overflow-hidden">
+  <section class="py-20 px-20 relative overflow-hidden">
     <!-- 背景 -->
     <div class="absolute inset-0 bg-gradient-to-b from-cyber-bg-alt via-cyber-bg to-cyber-bg-alt"></div>
     <div class="absolute inset-0 noise-overlay"></div>
